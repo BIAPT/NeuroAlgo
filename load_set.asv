@@ -3,10 +3,10 @@ function [Recording] = load_set(file_name,path)
 %   file_name: name of the file to load
 %   path: path to that file
 %
-%   Recording: structure containing the eeg data
+%   Reco
 
     Recording = struct();
-    Recording.eeg = [];
+    Recording.data = [];
     Recording.sampling_rate = -1;
     Recording.number_channels = -1;
     Recording.channels_location = [];
@@ -15,7 +15,7 @@ function [Recording] = load_set(file_name,path)
     % Currently supported format: .set files
     if(strcmp(type,'set'))
         data = pop_loadset(file_name,path);
-        Recording.eeg = data.data;
+        Recording.data = data.data;
         Recording.sampling_rate = data.srate;
         Recording.number_channels = data.nbchan;
         Recording.channels_location = data.chanlocs;
