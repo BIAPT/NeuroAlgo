@@ -1,4 +1,4 @@
-function [corrected_wpli] = wpli(eeg_data,eeg_info,parameters)
+function [corrected_wpli] = wpli(eeg_data, eeg_info, number_surrogates, p_value)
 %WPLI calculate weighted PLI and do some correction
 %   Input:
 %       eeg_data: data to calculate pli on
@@ -9,9 +9,7 @@ function [corrected_wpli] = wpli(eeg_data,eeg_info,parameters)
 %       substraction)
 
 %% Seting up variables
-    number_surrogates = parameters.number_surrogates;
     number_channels = size(eeg_data,1);
-   
     surrogates_wpli = zeros(number_surrogates,number_channels,number_channels);
     eeg_data = eeg_data';
     

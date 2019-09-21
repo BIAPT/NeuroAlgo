@@ -1,9 +1,10 @@
-function [corrected_dpli] = dpli(eeg_data,eeg_info,parameters)
+function [corrected_dpli] = dpli(eeg_data,eeg_info, number_surrogates, p_value)
 %DPLI calculate weighted PLI and do some correction
 %   Input:
 %       eeg_data: data to calculate pli on
 %       eeg_info: info about the headset
-%       parameters: variable data as inputed by the user
+%       number_surrogates: number of surrogates dpli to create
+%       p_value: p value to do the testing with the number of surrogates
 %   Output:
 %       corrected_wpli: PLI with a correction (either p value or
 %       substraction)
@@ -24,66 +25,117 @@ function [corrected_dpli] = dpli(eeg_data,eeg_info,parameters)
     end
     
     %% Correct the dPLI
-    corrected_dpli = get_corrected_dpli(uncorrected_dpli,surrogates_dpli,parameters);
+    corrected_dpli = zeros(size(uncorrected_dpli));
+    %Here we compare the calculated dPLI versus the surrogate
+    %and test for significance
 
+    %if the result is significant then 4 conditions are possible
+    %1.dPLI value is greater than 0.5 and the median of the surrogate
+    %is greater than 0.5
+    %2.dPLI value is smaller than 0.5 and the median of the surrogate
+    %is smaller than 0.5
+    %3.dPLI is greater than 0.5 and median of surrogate is smaller
+    %than 0.5
+    %4.dPLI is smaller than 0.5 and median of surrogate is greater
+    %than 0.5
+    for m = 1:length(uncorrected_dpli)
+        for n = 1:length(uncorrected_dpli)
+            test = surrogates_dpli(:,m,n);
+            p = signrank(test, uncorrected_dpli(m,n)); 
+            disp(p);
+            if p < p_value % 4 Conditions 
+                if uncorrected_dpli(m,n) > 0.5 && median(test) > 0.5
+                    gap = uncorrected_dpli(m,n) - median(test);
+                        if(gap < 0)
+                            corrected_dpli(m,n) = 0.5; 
+                        else
+                            corrected_dpli(m,n) = gap + 0.5; %Gap is positive here
+                        end  
+                elseif uncorrected_dpli(m,n) < 0.5 && median(test) < 0.5 % CASE 2
+                    gap = uncorrected_dpli(m,n) - median(test);
+                    if(gap > 0)
+                        corrected_dpli(m,n) = 0.5; 
+                    else
+                        corrected_dpli(m,n) = gap + 0.5; %Gap is negative here
+                    end
+                elseif uncorrected_dpli(m,n) > 0.5 && median(test) < 0.5 %CASE 3
+                    extra = 0.5 - median(test);
+                    corrected_dpli(m,n) = uncorrected_dpli(m,n) + extra;
+                elseif uncorrected_dpli(m,n) < 0.5 && median(test) > 0.5 %CASE 4
+                    extra = median(test) - 0.5;
+                    corrected_dpli(m,n) = uncorrected_dpli(m,n) - extra;
+                end
+            else
+                corrected_dpli(m,n) = 0.5;
+            end
+        end
+    end
 end
 
-% this function correct the dPLI either by doing a substraction or
-% significance testing
-function [corrected_dpli] = get_corrected_dpli(uncorrected_dpli,surrogates_dpli,parameters)
-    is_surrogates = parameters.is_surrogates;
-    if(is_surrogates)
-        p_value = parameters.p_value;
-        corrected_dpli = zeros(size(uncorrected_dpli));
-            %Here we compare the calculated dPLI versus the surrogate
-            %and test for significance
-            
-            %if the result is significant then 4 conditions are possible
-            %1.dPLI value is greater than 0.5 and the median of the surrogate
-            %is greater than 0.5
-            %2.dPLI value is smaller than 0.5 and the median of the surrogate
-            %is smaller than 0.5
-            %3.dPLI is greater than 0.5 and median of surrogate is smaller
-            %than 0.5
-            %4.dPLI is smaller than 0.5 and median of surrogate is greater
-            %than 0.5
-            for m = 1:length(uncorrected_dpli)
-                for n = 1:length(uncorrected_dpli)
-                    test = surrogates_dpli(:,m,n);
-                    p = signrank(test, uncorrected_dpli(m,n)); 
-                    disp(p);
-                    if p < p_value % 4 Conditions 
-                        if uncorrected_dpli(m,n) > 0.5 && median(test) > 0.5
-                            gap = uncorrected_dpli(m,n) - median(test);
-                                if(gap < 0)
-                                    corrected_dpli(m,n) = 0.5; 
-                                else
-                                    corrected_dpli(m,n) = gap + 0.5; %Gap is positive here
-                                end  
-                        elseif uncorrected_dpli(m,n) < 0.5 && median(test) < 0.5 % CASE 2
-                            gap = uncorrected_dpli(m,n) - median(test);
-                            if(gap > 0)
-                                corrected_dpli(m,n) = 0.5; 
-                            else
-                                corrected_dpli(m,n) = gap + 0.5; %Gap is negative here
-                            end
-                        elseif uncorrected_dpli(m,n) > 0.5 && median(test) < 0.5 %CASE 3
-                            extra = 0.5 - median(test);
-                            corrected_dpli(m,n) = uncorrected_dpli(m,n) + extra;
-                        elseif uncorrected_dpli(m,n) < 0.5 && median(test) > 0.5 %CASE 4
-                            extra = median(test) - 0.5;
-                            corrected_dpli(m,n) = uncorrected_dpli(m,n) - extra;
-                        end
-                    else
-                        corrected_dpli(m,n) = 0.5;
-                    end
-                end
-            end
-    else
-        % Here we simply substract the surrogates dPLI from the uncorrected
-        % dPLi
-        corrected_dpli = uncorrected_dpli - squeeze(mean(surrogates_dpli,1));
-        corrected_dpli(corrected_dpli<0) = 0;
+function dpli = d_PhaseLagIndex(data)
+    % Given a multivariate data, returns phase lag index matrix
+    % Modified the mfile of 'phase synchronization'
+    % PLI(ch1, ch2) : 
+    % if it is greater than 0.5, ch1->ch2
+    % if it is less than 0.5, ch2->ch1
+
+    channel = size(data, 2); % column should be channel
+
+    %%%%%% Hilbert transform and computation of phases
+    for i=1:channel
+        x = data(:,i);
+        %     phi0=angle(hilbert(x));  % only the phase component
+        %     phi1(:,i)=unwrap(phi0);  % smoothing
+        phi1(:,i) = angle(hilbert(x));
     end
 
+    dpli = ones(channel, channel);
+
+    for channel_i = 1:channel
+        for channel_j= 1 :channel
+            %%%%%% phase lage index
+            PDiff = phi1(:, channel_i) - phi1(:, channel_j); % phase difference
+            %PLI(ch1,ch2)=mean(sign(PDiff)); % only count the asymmetry
+            dpli(channel_i, channel_j) = mean(heaviside(sin(PDiff)));
+        end
+    end
+
+    % By definition,
+    % if PLI(ch1,ch2) is greater than 0.5, ch1 is leading ch2.
+    % if it is less than 0.5, ch1 is lagged by ch2.
+end
+
+function dpli = d_PhaseLagIndex_surrogate(X)
+    % Given a multivariate data, returns phase lag index matrix
+    % Modified the mfile of 'phase synchronization'
+    % PLI(ch1, ch2) : 
+    % if it is greater than 0.5, ch1->ch2
+    % if it is less than 0.5, ch2->ch1
+
+    ch=size(X,2); % column should be channel
+    splice = randi(length(X));  % determines random place in signal where it will be spliced
+
+    %%%%%% Hilbert transform and computation of phases
+    for i=1:ch
+        x=X(:,i);
+        %     phi0=angle(hilbert(x));  % only the phase component
+        %     phi1(:,i)=unwrap(phi0);  % smoothing
+        phi1(:,i)=angle(hilbert(x));
+        phi2(:,i) = [phi1(splice:length(phi1),i); phi1(1:splice-1,i)];  % %This is the randomized signal
+    end
+
+    dpli=ones(ch,ch);
+
+    for ch1=1:ch
+        for ch2=1:ch
+            %%%%%% phase lage index
+            PDiff=phi1(:,ch1)-phi2(:,ch2); % phase difference
+    %         PLI(ch1,ch2)=mean(sign(PDiff)); % only count the asymmetry
+            dpli(ch1,ch2)=mean(heaviside(sin(PDiff)));
+        end
+    end
+
+    % By definition,
+    % if PLI(ch1,ch2) is greater than 0.5, ch1 is leading ch2.
+    % if it is less than 0.5, ch1 is lagged by ch2.
 end
