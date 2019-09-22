@@ -5,8 +5,8 @@ The goal is to take all the code from dead libraries that are still usable and p
 
 
 ## To Get
-* Chronux
+* Chronux (Got it, but ot sure if its the latest version)
 * BCT
 * eeglab fork (Right now I have a eeglab 14)
-* EEGsonic code
+* EEGsonic code (Got it)
 * EEGapp code
