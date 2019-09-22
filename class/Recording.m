@@ -4,19 +4,23 @@ classdef Recording
     
     properties
         data;
+        length_recording;
         sampling_rate;
         number_channels;
         channels_location;
+        creation_date;
     end
     
     methods
-        function obj = Recording(data,sampling_rate, number_channels, channels_location)
+        function obj = Recording(data, sampling_rate, number_channels, channels_location)
             %Recording Construct an instance of this class
             %   Detailed explanation goes here
             obj.data = data;
             obj.sampling_rate = sampling_rate;
             obj.number_channels = number_channels;
             obj.channels_location = channels_location;
+            obj.length_recording = length(data);
+            obj.creation_date = posixtime(datetime());
             
             % Label whether the channels is anterior or posterior
             epsilon = 0.000001;
@@ -117,6 +121,18 @@ classdef Recording
             else
                 is_midline = 1;
             end
+        end
+        
+        % This function is to get non-overlapping windowed data
+        function [windowed_data] = get_windowed_data(obj,window_size)
+                window_size = window_size*obj.sampling_rate; % in points
+                iterator = 1:window_size:(obj.length_recording - window_size);
+                windowed_data = zeros(length(iterator),obj.number_channels,window_size);
+                index = 1;
+                for i = 1:window_size:(obj.length_recording - window_size)
+                    windowed_data(index,:,:) = obj.data(:,i:i+window_size-1);
+                    index = index + 1;
+                end
         end
     end
 end
