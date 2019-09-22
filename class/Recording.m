@@ -124,15 +124,19 @@ classdef Recording
         end
         
         % This function is to get non-overlapping windowed data
-        function [windowed_data] = get_windowed_data(obj,window_size)
-                window_size = window_size*obj.sampling_rate; % in points
-                iterator = 1:window_size:(obj.length_recording - window_size);
-                windowed_data = zeros(length(iterator),obj.number_channels,window_size);
-                index = 1;
-                for i = 1:window_size:(obj.length_recording - window_size)
-                    windowed_data(index,:,:) = obj.data(:,i:i+window_size-1);
-                    index = index + 1;
-                end
+        function [windowed_data] = create_window(obj, data, window_size)
+            window_size = window_size*obj.sampling_rate; % in points
+            iterator = 1:window_size:(obj.length_recording - window_size);
+            windowed_data = zeros(length(iterator),obj.number_channels,window_size);
+            index = 1;
+            for i = 1:window_size:(obj.length_recording - window_size)
+                windowed_data(index,:,:) = data(:,i:i+window_size-1);
+                index = index + 1;
+            end
+        end
+        
+        function [filtered_data] = filter_data(obj, data, frequency_band)
+            filtered_data = bpfilter(frequency_band(1),frequency_band(2), obj.sampling_rate, double(data));
         end
     end
 end
