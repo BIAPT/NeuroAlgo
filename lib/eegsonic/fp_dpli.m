@@ -1,4 +1,4 @@
-function [dpli_struct] = fp_dpli(eeg_data,eeg_info,parameters,mask)
+function [dpli_struct] = fp_dpli(eeg_data, eeg_info, number_surrogates, p_value)
 %FP_DPLI Calculate frontoparietal dPLI measure (average dPLI for midline
 %and lateral electrodes)
 %   Input:
