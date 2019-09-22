@@ -3,7 +3,8 @@ function [corrected_wpli] = wpli(eeg_data, number_surrogates, p_value)
 %   Input:
 %       eeg_data: data to calculate pli on
 %       eeg_info: info about the headset
-%       parameters: variable data as inputed by the user
+%       number_surrogates: number of surrogates data to generate
+%       p_value: p value level to test at
 %   Output:
 %       corrected_wpli: PLI with a correction (either p value or
 %       substraction)
@@ -14,12 +15,12 @@ function [corrected_wpli] = wpli(eeg_data, number_surrogates, p_value)
     eeg_data = eeg_data';
     
     %% Calculate wPLI
-    uncorrected_wpli = w_PhaseLagIndex(eeg_data); % uncorrected
+    uncorrected_wpli = weighted_phase_lag_index(eeg_data); % uncorrected
     uncorrected_wpli(isnan(uncorrected_wpli)) = 0; %Have to do this otherwise NaN break the code
     
     %% Generate Surrogates
     for index = 1:number_surrogates
-        surrogates_wpli(index,:,:) = w_PhaseLagIndex_surrogate(eeg_data);
+        surrogates_wpli(index,:,:) = weighted_phase_lag_index_surrogate(eeg_data);
     end
     
     %% Correct the wPLI (either by substracting or doing a p test)
@@ -39,36 +40,33 @@ function [corrected_wpli] = wpli(eeg_data, number_surrogates, p_value)
     end
 end
 
-function WPLI=w_PhaseLagIndex(bdata)
-    % INPUT:
-    %   bdata: band-pass filtered data
+function pli = weighted_phase_lag_index(data)
+    number_channel = size(data,2); 
+    a_sig = hilbert(data);
+    pli = ones(number_channel,number_channel);
 
-    ch=size(bdata,2); % column should be channel
-    a_sig=hilbert(bdata);
-    WPLI=ones(ch,ch);
+    for channel_i=1:number_channel-1
+        for channel_j=channel_i+1:number_channel
+            c_sig=a_sig(:,channel_i).*conj(a_sig(:,channel_j));
 
-    for c1=1:ch-1
-        for c2=c1+1:ch
-            c_sig=a_sig(:,c1).*conj(a_sig(:,c2));
+            numerator=abs(mean(imag(c_sig))); % average of imaginary
+            denominator=mean(abs(imag(c_sig))); % average of abs of imaginary
 
-            numer=abs(mean(imag(c_sig))); % average of imaginary
-            denom=mean(abs(imag(c_sig))); % average of abs of imaginary
-
-            WPLI(c1,c2)=numer/denom;
-            WPLI(c2,c1)=WPLI(c1,c2);
+            pli(channel_i,channel_j) = numerator/denominator;
+            pli(channel_j,channel_i) = pli(channel_i,channel_j);
         end
     end 
 end
 
-function surro_WPLI=PhaseLagIndex_surrogate(X)
+function surrogate_pli = weighted_phase_lag_index_surrogate(data)
     % Given a multivariate data, returns phase lag index matrix
     % Modified the mfile of 'phase synchronization'
-    ch=size(X,2); % column should be channel
-    splice = randi(length(X));  % determines random place in signal where it will be spliced
+    ch=size(data,2); % column should be channel
+    splice = randi(length(data));  % determines random place in signal where it will be spliced
 
-    a_sig=hilbert(X);
+    a_sig=hilbert(data);
     a_sig2= [a_sig(splice:length(a_sig),:); a_sig(1:splice-1,:)];  % %This is the randomized signal
-    surro_WPLI=ones(ch,ch);
+    surrogate_pli=ones(ch,ch);
 
     for c1=1:ch-1
         for c2=c1+1:ch
@@ -77,8 +75,8 @@ function surro_WPLI=PhaseLagIndex_surrogate(X)
             numer=abs(mean(imag(c_sig))); % average of imaginary
             denom=mean(abs(imag(c_sig))); % average of abs of imaginary
 
-            surro_WPLI(c1,c2)=numer/denom;
-            surro_WPLI(c2,c1)=surro_WPLI(c1,c2);
+            surrogate_pli(c1,c2)=numer/denom;
+            surrogate_pli(c2,c1)=surrogate_pli(c1,c2);
         end
     end 
 end

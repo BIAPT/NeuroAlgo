@@ -71,7 +71,7 @@ function [corrected_dpli] = dpli(eeg_data, number_surrogates, p_value)
     end
 end
 
-function dpli = directed_phase_lag_index(data)
+function pli = directed_phase_lag_index(data)
     % Given a multivariate data, returns phase lag index matrix
     % Modified the mfile of 'phase synchronization'
     % PLI(ch1, ch2) : 
@@ -86,19 +86,19 @@ function dpli = directed_phase_lag_index(data)
         phase(:,i) = angle(hilbert(segment));
     end
 
-    dpli = ones(number_channel, number_channel);
+    pli = ones(number_channel, number_channel);
 
     for channel_i = 1:number_channel
         for channel_j= 1 :number_channel
             %%%%%% phase lage index
             phase_difference = phase(:, channel_i) - phase(:, channel_j); % phase difference
             %PLI(ch1,ch2)=mean(sign(PDiff)); % only count the asymmetry
-            dpli(channel_i, channel_j) = mean(heaviside(sin(phase_difference)));
+            pli(channel_i, channel_j) = mean(heaviside(sin(phase_difference)));
         end
     end
 end
 
-function dpli = directed_phase_lag_index_surrogate(data)
+function surrogate_pli = directed_phase_lag_index_surrogate(data)
     % Given a multivariate data, returns phase lag index matrix
     % Modified the mfile of 'phase synchronization'
     % PLI(ch1, ch2) : 
@@ -117,14 +117,14 @@ function dpli = directed_phase_lag_index_surrogate(data)
         random_phase(:,i) = [phase(splice:length(phase),i); phase(1:splice-1,i)];  % %This is the randomized signal
     end
 
-    dpli = ones(number_channel,number_channel);
+    surrogate_pli = ones(number_channel,number_channel);
 
     for channel_i = 1:number_channel
         for channel_j = 1:number_channel
             %%%%%% phase lage index
             phase_difference=phase(:,channel_i)-random_phase(:,channel_j); % phase difference
     %         PLI(ch1,ch2)=mean(sign(PDiff)); % only count the asymmetry
-            dpli(channel_i,channel_j)=mean(heaviside(sin(phase_difference)));
+            surrogate_pli(channel_i,channel_j)=mean(heaviside(sin(phase_difference)));
         end
     end
 end
