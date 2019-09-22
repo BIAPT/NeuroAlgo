@@ -1,4 +1,4 @@
-function [corrected_wpli] = wpli(eeg_data, eeg_info, number_surrogates, p_value)
+function [corrected_wpli] = wpli(eeg_data, number_surrogates, p_value)
 %WPLI calculate weighted PLI and do some correction
 %   Input:
 %       eeg_data: data to calculate pli on
@@ -23,34 +23,62 @@ function [corrected_wpli] = wpli(eeg_data, eeg_info, number_surrogates, p_value)
     end
     
     %% Correct the wPLI (either by substracting or doing a p test)
-    corrected_wpli = get_corrected_wpli(uncorrected_wpli,surrogates_wpli,parameters);
+    %Here we compare the calculated dPLI versus the surrogate
+    %and test for significance
+    corrected_wpli = zeros(size(uncorrected_wpli));
+    for m = 1:length(uncorrected_wpli)
+        for n = 1:length(uncorrected_wpli)
+            test = surrogates_wpli(:,m,n);
+            p = signrank(test, uncorrected_wpli(m,n));       
+            if p < p_value
+                if uncorrected_wpli(m,n) - median(test) > 0 %Special case to make sure no PLI is below 0
+                    corrected_wpli(m,n) = uncorrected_wpli(m,n) - median(test);
+                end
+            end          
+        end
+    end
 end
 
-% this function correct the wPLI either by doing a substraction or
-% significance testing
-function [corrected_wpli] = get_corrected_wpli(uncorrected_wpli,surrogates_wpli,parameters)
-    is_surrogates = parameters.is_surrogates;
-    if(is_surrogates)
-            p_value = parameters.p_value;
-            %Here we compare the calculated dPLI versus the surrogate
-            %and test for significance
-            corrected_wpli = zeros(size(uncorrected_wpli));
-            for m = 1:length(uncorrected_wpli)
-                for n = 1:length(uncorrected_wpli)
-                    test = surrogates_wpli(:,m,n);
-                    p = signrank(test, uncorrected_wpli(m,n));       
-                    if p < p_value
-                        if uncorrected_wpli(m,n) - median(test) > 0 %Special case to make sure no PLI is below 0
-                            corrected_wpli(m,n) = uncorrected_wpli(m,n) - median(test);
-                        end
-                    end          
-                end
-            end
-    else
-        % Here we simply substract the surrogates wPLI from the uncorrected
-        % wPLi
-        corrected_wpli = uncorrected_wpli - squeeze(mean(surrogates_wpli,1));
-        corrected_wpli(corrected_wpli<0) = 0;
-    end
+function WPLI=w_PhaseLagIndex(bdata)
+    % INPUT:
+    %   bdata: band-pass filtered data
 
+    ch=size(bdata,2); % column should be channel
+    a_sig=hilbert(bdata);
+    WPLI=ones(ch,ch);
+
+    for c1=1:ch-1
+        for c2=c1+1:ch
+            c_sig=a_sig(:,c1).*conj(a_sig(:,c2));
+
+            numer=abs(mean(imag(c_sig))); % average of imaginary
+            denom=mean(abs(imag(c_sig))); % average of abs of imaginary
+
+            WPLI(c1,c2)=numer/denom;
+            WPLI(c2,c1)=WPLI(c1,c2);
+        end
+    end 
+end
+
+function surro_WPLI=PhaseLagIndex_surrogate(X)
+    % Given a multivariate data, returns phase lag index matrix
+    % Modified the mfile of 'phase synchronization'
+    ch=size(X,2); % column should be channel
+    splice = randi(length(X));  % determines random place in signal where it will be spliced
+
+    a_sig=hilbert(X);
+    a_sig2= [a_sig(splice:length(a_sig),:); a_sig(1:splice-1,:)];  % %This is the randomized signal
+    surro_WPLI=ones(ch,ch);
+
+    for c1=1:ch-1
+        for c2=c1+1:ch
+            c_sig=a_sig(:,c1).*conj(a_sig2(:,c2));
+
+            numer=abs(mean(imag(c_sig))); % average of imaginary
+            denom=mean(abs(imag(c_sig))); % average of abs of imaginary
+
+            surro_WPLI(c1,c2)=numer/denom;
+            surro_WPLI(c2,c1)=surro_WPLI(c1,c2);
+        end
+    end 
 end

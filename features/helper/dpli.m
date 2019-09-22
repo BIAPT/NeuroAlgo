@@ -1,4 +1,4 @@
-function [corrected_dpli] = dpli(eeg_data,eeg_info, number_surrogates, p_value)
+function [corrected_dpli] = dpli(eeg_data, number_surrogates, p_value)
 %DPLI calculate weighted PLI and do some correction
 %   Input:
 %       eeg_data: data to calculate pli on
@@ -10,18 +10,17 @@ function [corrected_dpli] = dpli(eeg_data,eeg_info, number_surrogates, p_value)
 %       substraction)
 
     %% Seting up variables
-    number_surrogates = parameters.number_surrogates;
     number_channels = size(eeg_data,1);
     surrogates_dpli = zeros(number_surrogates,number_channels,number_channels);
     eeg_data = eeg_data';
     
     %% Calculate dPLI
-    uncorrected_dpli = d_PhaseLagIndex(eeg_data); % uncorrected
+    uncorrected_dpli = directed_phase_lag_index(eeg_data); % uncorrected
     uncorrected_dpli(isnan(uncorrected_dpli)) = 0.5; %Have to do this otherwise NaN break the code
     
     %% Generate Surrogates
     for index = 1:number_surrogates
-        surrogates_dpli(index,:,:) = d_PhaseLagIndex_surrogate(eeg_data);
+        surrogates_dpli(index,:,:) = directed_phase_lag_index_surrogate(eeg_data);
     end
     
     %% Correct the dPLI
@@ -72,70 +71,60 @@ function [corrected_dpli] = dpli(eeg_data,eeg_info, number_surrogates, p_value)
     end
 end
 
-function dpli = d_PhaseLagIndex(data)
+function dpli = directed_phase_lag_index(data)
     % Given a multivariate data, returns phase lag index matrix
     % Modified the mfile of 'phase synchronization'
     % PLI(ch1, ch2) : 
     % if it is greater than 0.5, ch1->ch2
     % if it is less than 0.5, ch2->ch1
 
-    channel = size(data, 2); % column should be channel
+    number_channel = size(data, 2); % column should be channel
 
     %%%%%% Hilbert transform and computation of phases
-    for i=1:channel
-        x = data(:,i);
-        %     phi0=angle(hilbert(x));  % only the phase component
-        %     phi1(:,i)=unwrap(phi0);  % smoothing
-        phi1(:,i) = angle(hilbert(x));
+    for i=1:number_channel
+        segment = data(:,i);
+        phase(:,i) = angle(hilbert(segment));
     end
 
-    dpli = ones(channel, channel);
+    dpli = ones(number_channel, number_channel);
 
-    for channel_i = 1:channel
-        for channel_j= 1 :channel
+    for channel_i = 1:number_channel
+        for channel_j= 1 :number_channel
             %%%%%% phase lage index
-            PDiff = phi1(:, channel_i) - phi1(:, channel_j); % phase difference
+            phase_difference = phase(:, channel_i) - phase(:, channel_j); % phase difference
             %PLI(ch1,ch2)=mean(sign(PDiff)); % only count the asymmetry
-            dpli(channel_i, channel_j) = mean(heaviside(sin(PDiff)));
+            dpli(channel_i, channel_j) = mean(heaviside(sin(phase_difference)));
         end
     end
-
-    % By definition,
-    % if PLI(ch1,ch2) is greater than 0.5, ch1 is leading ch2.
-    % if it is less than 0.5, ch1 is lagged by ch2.
 end
 
-function dpli = d_PhaseLagIndex_surrogate(X)
+function dpli = directed_phase_lag_index_surrogate(data)
     % Given a multivariate data, returns phase lag index matrix
     % Modified the mfile of 'phase synchronization'
     % PLI(ch1, ch2) : 
     % if it is greater than 0.5, ch1->ch2
     % if it is less than 0.5, ch2->ch1
 
-    ch=size(X,2); % column should be channel
-    splice = randi(length(X));  % determines random place in signal where it will be spliced
+    number_channel=size(data,2); % column should be channel
+    splice = randi(length(data));  % determines random place in signal where it will be spliced
 
     %%%%%% Hilbert transform and computation of phases
-    for i=1:ch
-        x=X(:,i);
+    for i=1:number_channel
+        segment=data(:,i);
         %     phi0=angle(hilbert(x));  % only the phase component
         %     phi1(:,i)=unwrap(phi0);  % smoothing
-        phi1(:,i)=angle(hilbert(x));
-        phi2(:,i) = [phi1(splice:length(phi1),i); phi1(1:splice-1,i)];  % %This is the randomized signal
+        phase(:,i) = angle(hilbert(segment));
+        random_phase(:,i) = [phase(splice:length(phase),i); phase(1:splice-1,i)];  % %This is the randomized signal
     end
 
-    dpli=ones(ch,ch);
+    dpli = ones(number_channel,number_channel);
 
-    for ch1=1:ch
-        for ch2=1:ch
+    for channel_i = 1:number_channel
+        for channel_j = 1:number_channel
             %%%%%% phase lage index
-            PDiff=phi1(:,ch1)-phi2(:,ch2); % phase difference
+            phase_difference=phase(:,channel_i)-random_phase(:,channel_j); % phase difference
     %         PLI(ch1,ch2)=mean(sign(PDiff)); % only count the asymmetry
-            dpli(ch1,ch2)=mean(heaviside(sin(PDiff)));
+            dpli(channel_i,channel_j)=mean(heaviside(sin(phase_difference)));
         end
     end
-
-    % By definition,
-    % if PLI(ch1,ch2) is greater than 0.5, ch1 is leading ch2.
-    % if it is less than 0.5, ch1 is lagged by ch2.
 end
