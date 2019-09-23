@@ -1,4 +1,4 @@
-function [hd_channel_index, hd_channel_degree, hd_normalized_value, hd_graph] = hub_location(eeg_data, channels_location, number_surrogates, p_value)
+function [hd_channel_index, hd_channel_degree, hd_normalized_value, hd_graph] = hub_location(eeg_data, channels_location, number_surrogates, p_value, threshold)
 %HUB_LOCATION choose from the the channels the channel with the highest
 %degree
 %   Input:
@@ -21,7 +21,7 @@ function [hd_channel_index, hd_channel_degree, hd_normalized_value, hd_graph] = 
     %% Threshold the wPLI depending on the top connection threshold
     % Find the threshold value
     sorted_wpli = sort(full_wpli(:));
-    treshold_index = floor((1-parameters.top_connection_threshold)*length(sorted_wpli));
+    treshold_index = floor((1-threshold)*length(sorted_wpli));
     treshold_value = sorted_wpli(treshold_index);
     % Here we binarized the wpli by thresholding at the value
 
