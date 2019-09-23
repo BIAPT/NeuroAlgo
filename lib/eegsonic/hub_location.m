@@ -1,4 +1,4 @@
-function [hd_channel_index, hd_channel_degree, hd_normalized_value, hd_graph] = hub_location(eeg_data, channels_location, number_surrogates, p_value, threshold)
+function [channel_index, channel_degree, normalized_value, graph] = hub_location(eeg_data, channels_location, number_surrogates, p_value, threshold)
 %HUB_LOCATION choose from the the channels the channel with the highest
 %degree
 %   Input:
@@ -26,14 +26,14 @@ function [hd_channel_index, hd_channel_degree, hd_normalized_value, hd_graph] = 
     % Here we binarized the wpli by thresholding at the value
 
     full_wpli(full_wpli < treshold_value) = 0;
-    hd_graph = full_wpli; % Here we save the thresholded high_degree graph
+    graph = full_wpli; % Here we save the thresholded high_degree graph
     full_wpli(full_wpli >= treshold_value) = 1;
      
     %% Caculate the unweighted degree of the network
     channels_degree = degrees_und(full_wpli);
 
     %% Find the channel with the highest degree
-    [hd_channel_degree, hd_channel_index] = max(channels_degree);
-    hd_normalized_value = threshold_anterior_posterior(hd_channel_index,channels_location);
+    [channel_degree, channel_index] = max(channels_degree);
+    normalized_value = threshold_anterior_posterior(channel_index,channels_location);
 end
 
