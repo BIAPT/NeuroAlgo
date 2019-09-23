@@ -41,7 +41,6 @@ function [corrected_dpli] = dpli(eeg_data, number_surrogates, p_value)
         for n = 1:length(uncorrected_dpli)
             test = surrogates_dpli(:,m,n);
             p = signrank(test, uncorrected_dpli(m,n)); 
-            disp(p);
             if p < p_value % 4 Conditions 
                 if uncorrected_dpli(m,n) > 0.5 && median(test) > 0.5
                     gap = uncorrected_dpli(m,n) - median(test);

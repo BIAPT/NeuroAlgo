@@ -1,13 +1,10 @@
-function [hd_channel_index, hd_channel_degree, hd_normalized_value, hd_graph] = hub_location(eeg_data, channels_location, number_surrogates, p_value)
+function [hd_channel_index, hd_channel_degree, hd_normalized_value] = hub_location(eeg_data,eeg_info,number_surrogates, p_value)
 %HUB_LOCATION choose from the the channels the channel with the highest
 %degree
 %   Input:
 %       eeg_data: data to calculate the measures on
-%       channels_location: information about the location of the channels
-%       number_surrogate: number of surrogate analysis we want to do for
-%       the creation of the wpli matrix
-%       p_value: value of the p we want for the significance testing of the
-%       wpli matrix
+%       eeg_info: headset information
+%       parameters: variables data as inputed by the user
 %   Output:
 %       hd_channel_index: index of the channel with the highest degree
 %       hd_channel_degree: the degree of the highest degree node
@@ -16,7 +13,7 @@ function [hd_channel_index, hd_channel_degree, hd_normalized_value, hd_graph] = 
 %       occipitalest electrode
 
     %% Calculate the wPLI for the full eeg
-    full_wpli = wpli(eeg_data,number_surrogates, p_value);
+    full_wpli = wpli(eeg_data,eeg_info,parameters);
 
     %% Threshold the wPLI depending on the top connection threshold
     % Find the threshold value
@@ -34,6 +31,7 @@ function [hd_channel_index, hd_channel_degree, hd_normalized_value, hd_graph] = 
 
     %% Find the channel with the highest degree
     [hd_channel_degree, hd_channel_index] = max(channels_degree);
-    hd_normalized_value = threshold_anterior_posterior(hd_channel_index,channels_location);
+    
+    hd_normalized_value = threshold_anterior_posterior(hd_channel_index,eeg_info.channels_location);
 end
 

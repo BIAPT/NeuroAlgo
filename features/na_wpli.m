@@ -3,15 +3,14 @@ function [result] = na_wpli(recording, frequency_band, window_size, number_surro
     % NOTE: right now we are only doing non-overlapping window (in sec)
     % NOTE: We are also only doing fullband eeg
     result = Result('wpli', recording);
+    print(strcat("Filtering Data from ",string(frequency_band(1)), "Hz to ", string(frequency_band(2)), "Hz."),is_verbose);
     filtered_data = recording.filter_data(recording.data, frequency_band);
     windowed_data = recording.create_window(filtered_data, window_size);
     [number_window,~,~] = size(windowed_data);
     %% Calculation on the windowed segments
     result.data.wpli = zeros(number_window, recording.number_channels, recording.number_channels);
     for i = 1:number_window
-       if(is_verbose)
-          disp(strcat("wPLI at window: ",string(i)," of ", string(number_window))); 
-       end
+       print(strcat("wPLI at window: ",string(i)," of ", string(number_window)),is_verbose); 
        segment_data = squeeze(windowed_data(i,:,:));
        segment_wpli = wpli(segment_data, number_surrogate, p_value); 
        result.data.wpli(i,:,:) = segment_wpli;
