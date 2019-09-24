@@ -7,11 +7,9 @@ function [modulogram, ratio_peak_through] = phase_amplitude_coupling(eeg_data,sa
 %       low_frequency_bandwith: array of size two with the bandwith for the
 %       extra low bandwith.
 %       high_frequency_bandwith: array of size two with the bandwith for
-%       the high frequency bandwith
-%       number_bins: number of bins for the modulogram (18 is good)
 %   Output:
-%       modulogram: the modulogram of the phase and amplitude coupling
-%       ratio_peak_through: peak / through;
+%       rpt_frontal: ratio peak through for the frontal electrodes
+%       rpt_parietal: ratio peak through for the parietal electrodes
     
 %% Calculate Modulogram
     number_channels = size(eeg_data,1);
