@@ -1,7 +1,7 @@
-function [result] = na_phase_amplitude_coupling(recording, window_size, low_frequency_bandwith, high_frequency_bandwith, number_bins, is_verbose)
+function [result] = na_phase_amplitude_coupling(recording, window_size, low_frequency_bandwith, high_frequency_bandwith, number_bins)
     %NA_PHASE_AMPLITUDE_COUPLING NeuroAlgo implementation of spr that works with Recording
     % NOTE: right now we are only doing non-overlapping window (in sec)
-    
+    configuration = get_configuration();
     result = Result('phase amplitude coupling', recording);
     sampling_rate = recording.sampling_rate;
     channels_location = recording.channels_location;
@@ -20,7 +20,7 @@ function [result] = na_phase_amplitude_coupling(recording, window_size, low_freq
     result.data.ratio_peak_through_posterior = zeros(1,number_window);
     
     for i = 1:number_window
-        print(strcat("Phase Amplitude Coupling at window: ",string(i)," of ", string(number_window)),is_verbose); 
+        print(strcat("Phase Amplitude Coupling at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
         segment_data = squeeze(windowed_data(i,:,:));
        
         % Whole head
