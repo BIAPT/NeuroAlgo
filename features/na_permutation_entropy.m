@@ -1,4 +1,4 @@
-function [result] = na_permutation_entropy(recording, frequency_band, window_size,embedding_dimension, time_lag ,is_verbose)
+function [result] = na_permutation_entropy(recording, frequency_band, window_size,embedding_dimension, time_lag )
     %NA_PERMUTATION_ENTROPY NeuroAlgo implementation of wpli that works with Recording
     % NOTE: right now we are only doing non-overlapping window (in sec)
     % NOTE: We are also only doing fullband eeg
