@@ -30,14 +30,14 @@ recording = load_set('test_data.set',test_data_path);
 % wPLI
 frequency_band = [7 13]; % This is in Hz
 window_size = 10; % This is in seconds and will be how we chunk the whole dataset
-number_surrogate = 10; % Number of surrogate wPLI to create
+number_surrogate = 1; % Number of surrogate wPLI to create
 p_value = 0.05; % the p value to make our test on
 result_wpli = na_wpli(recording, frequency_band, window_size, number_surrogate, p_value);
 
 % dPLI
 frequency_band = [7 13]; % This is in Hz
 window_size = 10; % This is in seconds and will be how we chunk the whole dataset
-number_surrogate = 10; % Number of surrogate wPLI to create
+number_surrogate = 1; % Number of surrogate wPLI to create
 p_value = 0.05; % the p value to make our test on
 result_dpli = na_dpli(recording, frequency_band, window_size, number_surrogate, p_value);
 

@@ -10,18 +10,18 @@ function [result] = na_hub_location(recording, frequency_band, window_size, numb
     %% Calculation on the windowed segments
     result.data.hub_index = zeros(1,number_window);
     result.data.hub_degree = zeros(1,number_window);
-    result.data.hub_normalized_value = zeros(1,number_window);
+    result.data.hub_relative_position = zeros(1,number_window);
     result.data.graph = zeros(number_window, recording.number_channels, recording.number_channels);
     for i = 1:number_window
        print(strcat("Hub Location at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
        segment_data = squeeze(windowed_data(i,:,:));
        % Calculating hub data for the segment
-       [channel_index, channel_degree, normalized_value, graph] = hub_location(segment_data, recording.channels_location, number_surrogate, p_value, threshold); 
+       [channel_index, channel_degree, relative_position, graph] = hub_location(segment_data, recording.channels_location, number_surrogate, p_value, threshold); 
        
        % Saving the hub data for this segment
        result.data.hub_index(i) = channel_index;
        result.data.hub_degree(i) = channel_degree;
-       result.data.hub_normalized_value(i) = normalized_value;
+       result.data.hub_relative_position(i) = relative_position;
        result.data.graph(i,:,:) = graph;
     end
 end
