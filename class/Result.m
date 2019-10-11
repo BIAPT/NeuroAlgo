@@ -18,6 +18,7 @@ classdef Result
             obj.data = struct();
             
             obj.metadata.sampling_rate = recording.sampling_rate;
+            obj.metadata.length_recording = recording.length_recording;
             obj.metadata.number_channels = recording.number_channels;
             obj.metadata.channels_location = recording.channels_location;
             obj.metadata.recording_creation_date = recording.creation_date;
