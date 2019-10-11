@@ -7,6 +7,7 @@ classdef Result
         type; % type of result data structure we have (e.g. wpli)
         data;
         metadata;
+        parameters;
     end
     
     methods
@@ -16,6 +17,7 @@ classdef Result
             obj.type = type;
             obj.metadata = struct();
             obj.data = struct();
+            obj.parameters = struct();
             
             obj.metadata.sampling_rate = recording.sampling_rate;
             obj.metadata.length_recording = recording.length_recording;
@@ -31,6 +33,7 @@ classdef Result
             result.type = obj.type;
             result.metadata = obj.metadata;
             result.data = obj.data;
+            result.parameters = obj.parameters;
             
             full_path = strcat(pathname,filesep,filename,".mat");
             save(full_path,'result');
