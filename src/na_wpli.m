@@ -41,9 +41,9 @@ function [result] = na_wpli(recording, frequency_band, window_size, number_surro
     result.data.right_midline_wpli = result.data.wpli(:, right_midline_mask, right_midline_mask);
     
     % Calculating average per region for each window
-    result.data.avg_left_lateral_wpli = mean(squeeze(mean(result.data.left_lateral_wpli,2)),2);
-    result.data.avg_left_midline_wpli = mean(squeeze(mean(result.data.left_midline_wpli,2)),2);
-    result.data.avg_right_lateral_wpli = mean(squeeze(mean(result.data.right_lateral_wpli,2)),2);
-    result.data.avg_right_midline_wpli = mean(squeeze(mean(result.data.right_midline_wpli,2)),2);    
+    result.data.avg_left_lateral_wpli = mean(squeeze(mean(result.data.left_lateral_wpli,2)),2)';
+    result.data.avg_left_midline_wpli = mean(squeeze(mean(result.data.left_midline_wpli,2)),2)';
+    result.data.avg_right_lateral_wpli = mean(squeeze(mean(result.data.right_lateral_wpli,2)),2)';
+    result.data.avg_right_midline_wpli = mean(squeeze(mean(result.data.right_midline_wpli,2)),2)';    
 end
 
