@@ -22,6 +22,19 @@ classdef Result
             obj.metadata.channels_location = recording.channels_location;
             obj.metadata.recording_creation_date = recording.creation_date;
         end
+        
+        function is_saved = save(obj, filename, pathname)
+            %% Need to create a struct with the right filename at the specified path
+            disp(strcat("Saving the Result under name ", filename, " at ", pathname));
+            result = struct();
+            result.type = obj.type;
+            result.metadata = obj.metadata;
+            result.data = obj.data;
+            
+            full_path = strcat(pathname,filesep,filename,".mat");
+            save(full_path,'result');
+            
+        end
     end
 end
 
