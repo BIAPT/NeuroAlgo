@@ -1,12 +1,19 @@
 function [result] = na_spectral_power_ratio(recording, window_size, time_bandwith_product,number_tapers,spectrum_window_size,step_size)
     %NA_SPECTRAL_POWER_RATIO NeuroAlgo implementation of spr that works with Recording
     % NOTE: right now we are only doing non-overlapping window (in sec)
+    
+    %% Configuration Setup
     configuration = get_configuration();
+    theta = configuration.bandpass.theta;
+    alpha = configuration.bandpass.alpha;
+    beta = configuration.bandpass.beta;
+    
+    %% Variable Initialization
     result = Result('sprectral power ratio', recording);
-    [theta, alpha, beta] = cfg_get_frequencies();
     sampling_rate = recording.sampling_rate;
     windowed_data = recording.create_window(recording.data, window_size);
     [number_window,~,~] = size(windowed_data);
+    
     %% Calculation on the windowed segments
     result.data.ratio_beta_alpha = zeros(1, number_window);
     result.data.ratio_alpha_theta = zeros(1,number_window);
@@ -22,10 +29,4 @@ function [result] = na_spectral_power_ratio(recording, window_size, time_bandwit
        result.data.ratio_alpha_theta(i) = avg_spectrum_alpha./avg_spectrum_theta;
     end
     
-end
-
-function [theta,alpha,beta] = cfg_get_frequencies()
-    theta = [4 7];
-    alpha = [7 13];
-    beta = [12 38];
 end
