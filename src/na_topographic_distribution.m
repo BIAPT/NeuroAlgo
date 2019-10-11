@@ -1,8 +1,16 @@
 function [result] = na_topographic_distribution(recording, window_size, frequency)
     %NA_SPECTRAL_POWER_RATIO NeuroAlgo implementation of spr that works with Recording
     % NOTE: right now we are only doing non-overlapping window (in sec)
+    
+    %% Getting Configuration
     configuration = get_configuration();
+    
+    %% Setting Result
     result = Result('topographic distribution', recording);
+    result.parameters.window_size = window_size;
+    result.parameters.frequency = frequency;
+    
+    %% Variable Initialization
     sampling_rate = recording.sampling_rate;
     channels_location = recording.channels_location;
     windowed_data = recording.create_window(recording.data, window_size);

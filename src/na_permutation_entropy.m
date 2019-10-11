@@ -2,9 +2,21 @@ function [result] = na_permutation_entropy(recording, frequency_band, window_siz
     %NA_PERMUTATION_ENTROPY NeuroAlgo implementation of wpli that works with Recording
     % NOTE: right now we are only doing non-overlapping window (in sec)
     % NOTE: We are also only doing fullband eeg
+    
+    %% Getting configuration
     configuration = get_configuration();
-    result = Result('wpli', recording);
+    
+    %% Setting Result
+    result = Result('permutation entropy', recording);
+    result.parameters.frequency_band = frequency_band;
+    result.parameters.window_size = window_size;
+    result.parameters.embedding_dimension = embedding_dimension;
+    result.parameters.time_lag = time_lag;
+    
+    %% Variable Initialization
     channels_location = recording.channels_location;
+    
+    %% Filtering the data
     print(strcat("Filtering Data from ",string(frequency_band(1)), "Hz to ", string(frequency_band(2)), "Hz."),configuration.is_verbose);
     filtered_data = recording.filter_data(recording.data, frequency_band);
     windowed_data = recording.create_window(filtered_data, window_size);

@@ -1,8 +1,18 @@
-function [result] = na_phase_amplitude_coupling(recording, window_size, low_frequency_bandwith, high_frequency_bandwith, number_bins)
+function [result] = na_phase_amplitude_coupling(recording, window_size, low_frequency_bandwidth, high_frequency_bandwidth, number_bins)
     %NA_PHASE_AMPLITUDE_COUPLING NeuroAlgo implementation of spr that works with Recording
     % NOTE: right now we are only doing non-overlapping window (in sec)
+    
+    %% Getting configuration
     configuration = get_configuration();
+    
+    %% Setting Result
     result = Result('phase amplitude coupling', recording);
+    result.parameters.window_size = window_size;
+    result.parameters.low_frequency_bandwidth = low_frequency_bandwidth;
+    result.parameters.high_frequency_bandwidth = high_frequency_bandwidth;
+    result.parameters.number_bins = number_bins;
+    
+    %% Variable Initialization
     sampling_rate = recording.sampling_rate;
     channels_location = recording.channels_location;
     windowed_data = recording.create_window(recording.data, window_size);
@@ -24,17 +34,17 @@ function [result] = na_phase_amplitude_coupling(recording, window_size, low_freq
         segment_data = squeeze(windowed_data(i,:,:));
        
         % Whole head
-        [modulogram_all, ratio_peak_through_all] = phase_amplitude_coupling(segment_data,sampling_rate, low_frequency_bandwith, high_frequency_bandwith, number_bins);
+        [modulogram_all, ratio_peak_through_all] = phase_amplitude_coupling(segment_data,sampling_rate, low_frequency_bandwidth, high_frequency_bandwidth, number_bins);
         result.data.modulogram_all(i,:) = modulogram_all;
         result.data.ratio_peak_through_all(i) = ratio_peak_through_all;
        
         % Only the anterior part
-        [modulogram_anterior, ratio_peak_through_anterior] = phase_amplitude_coupling(segment_data(anterior_mask),sampling_rate, low_frequency_bandwith, high_frequency_bandwith, number_bins);
+        [modulogram_anterior, ratio_peak_through_anterior] = phase_amplitude_coupling(segment_data(anterior_mask),sampling_rate, low_frequency_bandwidth, high_frequency_bandwidth, number_bins);
         result.data.modulogram_anterior(i,:) = modulogram_anterior;
         result.data.ratio_peak_through_anterior(i) = ratio_peak_through_anterior;
         
         % Only the posterior part
-        [modulogram_posterior, ratio_peak_through_posterior] = phase_amplitude_coupling(segment_data(posterior_mask),sampling_rate, low_frequency_bandwith, high_frequency_bandwith, number_bins);
+        [modulogram_posterior, ratio_peak_through_posterior] = phase_amplitude_coupling(segment_data(posterior_mask),sampling_rate, low_frequency_bandwidth, high_frequency_bandwidth, number_bins);
         result.data.modulogram_posterior(i,:) = modulogram_posterior;
         result.data.ratio_peak_through_posterior(i) = ratio_peak_through_posterior;
     end

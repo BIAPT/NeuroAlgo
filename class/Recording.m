@@ -141,11 +141,7 @@ classdef Recording
             low_frequency = frequency_band(1);
             high_frequency = frequency_band(2);
             sampling_frequency = obj.sampling_rate;
-            data = double(data);
-            
-            %% Design filter and filter the data
-            [b,a]=butter(1, [low_frequency/(sampling_frequency/2) high_frequency/(sampling_frequency/2)]);
-            filtered_data=filtfilt(b,a,data);
+            filtered_data = filter_bandpass(data, sampling_frequency, low_frequency, high_frequency);
             
         end
     end

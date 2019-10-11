@@ -34,11 +34,11 @@ end
 
 function [low_frequency_phase,high_frequency_amplitude] = extract_lfo_hfo(eeg_data,sampling_rate,low_frequency_bandwith,high_frequency_bandwith)
     %LFO filtering
-    eeg_low_frequency = bpfilter(low_frequency_bandwith(1),low_frequency_bandwith(2),sampling_rate,double(eeg_data'));
+    eeg_low_frequency = filter_bandpass(eeg_data',sampling_rate,low_frequency_bandwith(1),low_frequency_bandwith(2));
     eeg_low_frequency = eeg_low_frequency';
     
     %HFO filtering
-    eeg_high_frequency = bpfilter(high_frequency_bandwith(1),high_frequency_bandwith(2),sampling_rate,double(eeg_data'));
+    eeg_high_frequency = filter_bandpass(eeg_data',sampling_rate, high_frequency_bandwith(1),high_frequency_bandwith(2));
     eeg_high_frequency = eeg_high_frequency';
     
     % Calculate the LFO phase and HFO amplitude 

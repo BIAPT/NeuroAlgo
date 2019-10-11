@@ -1,8 +1,19 @@
 function [result] = na_hub_location(recording, frequency_band, window_size, number_surrogate, p_value ,threshold)
 %NA_HUB_LOCATION Summary of this function goes here
 %   Detailed explanation goes here
+
+    %% Getting the configuration
     configuration = get_configuration();
+    
+    %% Setting the Result
     result = Result('hub location', recording);
+    result.parameters.frequency_band = frequency_band;
+    result.parameters.window_size = window_size;
+    result.parameters.number_surrogate = number_surrogate;
+    result.parameters.p_value = p_value;
+    result.parameters.threshold = threshold;
+    
+    %% Filtering the data
     print(strcat("Filtering Data from ",string(frequency_band(1)), "Hz to ", string(frequency_band(2)), "Hz."),configuration.is_verbose);
     filtered_data = recording.filter_data(recording.data, frequency_band);
     windowed_data = recording.create_window(filtered_data, window_size);
