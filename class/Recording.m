@@ -136,7 +136,17 @@ classdef Recording
         end
         
         function [filtered_data] = filter_data(obj, data, frequency_band)
-            filtered_data = bpfilter(frequency_band(1),frequency_band(2), obj.sampling_rate, double(data));
+            
+            %% Variable Initialization
+            low_frequency = frequency_band(1);
+            high_frequency = frequency_band(2);
+            sampling_frequency = obj.sampling_rate;
+            data = double(data);
+            
+            %% Design filter and filter the data
+            [b,a]=butter(1, [low_frequency/(sampling_frequency/2) high_frequency/(sampling_frequency/2)]);
+            filtered_data=filtfilt(b,a,data);
+            
         end
     end
 end
