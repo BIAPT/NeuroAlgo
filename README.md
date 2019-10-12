@@ -6,3 +6,6 @@ The goal is to take all the code from stale and stable neuroscience libraries th
 
 ## To Get
 * EEGapp code
+
+## Code contributor
+* Johann (https://www.mathworks.com/matlabcentral/profile/authors/5256254-johann) functional connectivity plotting functions (modified)
