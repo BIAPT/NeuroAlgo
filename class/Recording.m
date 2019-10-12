@@ -125,11 +125,17 @@ classdef Recording
         
         % This function is to get non-overlapping windowed data
         function [windowed_data] = create_window(obj, data, window_size)
+            [windowed_data] = create_sliding_window(obj, data, window_size, window_size)
+        end
+        
+        % This function is to get overlapping windowed data
+        function [windowed_data] = create_sliding_window(obj, data, window_size, step)
             window_size = window_size*obj.sampling_rate; % in points
-            iterator = 1:window_size:(obj.length_recording - window_size);
+            step = step*obj.sampling_rate;
+            iterator = 1:step:(obj.length_recording - window_size);
             windowed_data = zeros(length(iterator),obj.number_channels,window_size);
             index = 1;
-            for i = 1:window_size:(obj.length_recording - window_size)
+            for i = 1:step:(obj.length_recording - window_size)
                 windowed_data(index,:,:) = data(:,i:i+window_size-1);
                 index = index + 1;
             end

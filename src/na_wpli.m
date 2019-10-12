@@ -1,4 +1,4 @@
-function [result] = na_wpli(recording, frequency_band, window_size, number_surrogate, p_value)
+function [result] = na_wpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value)
     %NA_WPLI NeuroAlgo implementation of wpli that works with Recording
     % NOTE: right now we are only doing non-overlapping window (in sec)
     % NOTE: We are also only doing fullband eeg
@@ -10,13 +10,15 @@ function [result] = na_wpli(recording, frequency_band, window_size, number_surro
     result = Result('wpli', recording);
     result.parameters.frequency_band = frequency_band;
     result.parameters.window_size = window_size;
+    result.parameters.step_size = step_size;
     result.parameters.number_surrogate = number_surrogate;
     result.parameters.p_value = p_value;
+    
     
     %% Filtering the data
     print(strcat("Filtering Data from ",string(frequency_band(1)), "Hz to ", string(frequency_band(2)), "Hz."),configuration.is_verbose);
     filtered_data = recording.filter_data(recording.data, frequency_band);
-    windowed_data = recording.create_window(filtered_data, window_size);
+    windowed_data = recording.create_sliding_window(filtered_data, window_size, step_size);
     [number_window,~,~] = size(windowed_data);
     %% Calculation on the windowed segments
     result.data.wpli = zeros(number_window, recording.number_channels, recording.number_channels);
