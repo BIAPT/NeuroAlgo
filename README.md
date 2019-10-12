@@ -5,8 +5,4 @@ The goal is to take all the code from stale and stable neuroscience libraries th
 
 
 ## To Get
-* Chronux (Got it, but not sure if its the latest version)
-* BCT (Got the 2017 version of it)
-* eeglab fork (Right now I have a eeglab 14)
-* EEGsonic code (Got it)
 * EEGapp code
