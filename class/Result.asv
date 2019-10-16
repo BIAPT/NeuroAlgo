@@ -42,10 +42,8 @@ classdef Result
         
         function make_video_topgraphic_map(obj)
             %% This should only work for wPLI and dPLI
-            topographic_map = mean(obj.data.wpli,3);
-            channels_location = obj.metadata.channels_location;
-            step_size = obj.parameters.step_size;
-            make_video_topographic_map('test_wpli', topographic_map, channels_location, step_size)
+            topographic_map = mean(obj.data.wpli
+            make_video_topographic_map("test_wpli", topographic_map, channels_location, step_size)
         end
     end
 end
