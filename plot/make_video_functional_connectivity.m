@@ -12,14 +12,26 @@ function [video] = make_video_functional_connectivity(filename, functional_conne
     for i=1:number_frames %where N is the number of images
         disp(strcat("Making video: ", string(i/number_frames)," %"));
         matrix = squeeze(functional_connectivity_matrices(i,:,:));
+        
+        % Create the figure
         fc_figure = figure('visible','off');
+        % First plot is the matrix
+        subplot(1,2,1)
         colormap('jet');
         imagesc(matrix);
         colorbar;
         caxis([min_color max_color])
+        % Second plot is the average connectivity
+        colormap('jet');
+        imagesc(matrix);
+        colorbar;
+        caxis([min_color max_color])
+        
         writeVideo(video,getframe(fc_figure)); %write the image to file
         delete(fc_figure)
     end
     close(video); %close the file
 end
+
+%topoplot(F(i,:),EEG_info.chanlocs,'maplimits','absmax', 'electrodes', 'off');
 
