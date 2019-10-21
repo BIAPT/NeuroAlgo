@@ -19,7 +19,7 @@ function [corrected_dpli] = dpli(eeg_data, number_surrogates, p_value)
     uncorrected_dpli(isnan(uncorrected_dpli)) = 0.5; %Have to do this otherwise NaN break the code
     
     %% Generate Surrogates
-    for index = 1:number_surrogates
+    parfor index = 1:number_surrogates
         surrogates_dpli(index,:,:) = directed_phase_lag_index_surrogate(eeg_data);
     end
     

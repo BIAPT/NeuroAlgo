@@ -19,7 +19,7 @@ function [corrected_wpli] = wpli(eeg_data, number_surrogates, p_value)
     uncorrected_wpli(isnan(uncorrected_wpli)) = 0; %Have to do this otherwise NaN break the code
     
     %% Generate Surrogates
-    for index = 1:number_surrogates
+    parfor index = 1:number_surrogates
         surrogates_wpli(index,:,:) = weighted_phase_lag_index_surrogate(eeg_data);
     end
     
