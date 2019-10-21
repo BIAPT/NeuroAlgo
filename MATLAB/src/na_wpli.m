@@ -39,23 +39,68 @@ function [result] = na_wpli(recording, frequency_band, window_size, step_size, n
     is_right = [recording.channels_location.is_right];
     is_midline = [recording.channels_location.is_midline];
     is_lateral = [recording.channels_location.is_lateral];
+    is_anterior = [recording.channels_location.is_anterior];
+    is_posterior = [recording.channels_location.is_posterior];
     
     % Specific Mask
-    left_lateral_mask = (is_left == 1 & is_lateral == 1);
-    left_midline_mask = (is_left == 1 & is_midline == 1);
-    right_lateral_mask = (is_right == 1 & is_lateral == 1);
-    right_midline_mask = (is_right == 1 & is_midline == 1);
+    is_left_lateral = (is_left & is_lateral);
+    is_left_lateral_anterior = (is_left_lateral & is_anterior);
+    is_left_lateral_posterior = (is_left_lateral & is_posterior);
+    
+    is_left_midline = (is_left & is_midline);
+    is_left_midline_anterior = (is_left_midline & is_anterior);
+    is_left_midline_posterior = (is_left_midline & is_posterior);
+    
+    is_right_lateral = (is_right & is_lateral);
+    is_right_lateral_anterior = (is_right_lateral & is_anterior);
+    is_right_lateral_posterior = (is_right_lateral & is_posterior);
+    
+    is_right_midline = (is_right & is_midline);
+    is_right_midline_anterior = (is_right_midline & is_anterior);
+    is_right_midline_posterior = (is_right_midline & is_posterior);
     
     % Calculating wpli for each region
-    result.data.left_lateral_wpli = result.data.wpli(:, left_lateral_mask, left_lateral_mask);
-    result.data.left_midline_wpli = result.data.wpli(:, left_midline_mask, left_midline_mask);
-    result.data.right_lateral_wpli = result.data.wpli(:, right_lateral_mask, right_lateral_mask);
-    result.data.right_midline_wpli = result.data.wpli(:, right_midline_mask, right_midline_mask);
+    result.data.left_lateral_wpli = result.data.wpli(:, is_left_lateral, is_left_lateral);
+    result.data.left_lateral_anterior_wpli = result.data.wpli(:, is_left_lateral_anterior, is_left_lateral_anterior);
+    result.data.left_lateral_posterior_wpli = result.data.wpli(:, is_left_lateral_posterior, is_left_lateral_posterior);    
+    
+    result.data.left_midline_wpli = result.data.wpli(:, is_left_midline, is_left_midline);
+    result.data.left_midline_anterior_wpli = result.data.wpli(:, is_left_midline_anterior, is_left_midline_anterior);
+    result.data.left_midline_posterior_wpli = result.data.wpli(:, is_left_midline_posterior, is_left_midline_posterior); 
+    
+    result.data.right_lateral_wpli = result.data.wpli(:, is_right_lateral, is_right_lateral);
+    result.data.right_lateral_anterior_wpli = result.data.wpli(:, is_right_lateral_anterior, is_right_lateral_anterior);
+    result.data.right_lateral_posterior_wpli = result.data.wpli(:, is_right_lateral_posterior, is_right_lateral_posterior);
+    
+    result.data.right_midline_wpli = result.data.wpli(:, is_right_midline, is_right_midline);
+    result.data.right_midline_anterior_wpli = result.data.wpli(:, is_right_midline_anterior, is_right_midline_anterior);
+    result.data.right_midline_posterior_wpli = result.data.wpli(:, is_right_midline_posterior, is_right_midline_posterior);    
     
     % Calculating average per region for each window
-    result.data.avg_left_lateral_wpli = mean(squeeze(mean(result.data.left_lateral_wpli,2)),2)';
-    result.data.avg_left_midline_wpli = mean(squeeze(mean(result.data.left_midline_wpli,2)),2)';
-    result.data.avg_right_lateral_wpli = mean(squeeze(mean(result.data.right_lateral_wpli,2)),2)';
-    result.data.avg_right_midline_wpli = mean(squeeze(mean(result.data.right_midline_wpli,2)),2)';    
+    result.data.avg_left_lateral_wpli = average_connectivity(result.data.left_lateral_wpli);
+    result.data.avg_left_lateral_anterior_wpli = average_connectivity(result.data.left_lateral_anterior_wpli);
+    result.data.avg_left_lateral_posterior_wpli = average_connectivity(result.data.left_lateral_posterior_wpli);
+    
+    result.data.avg_left_midline_wpli = average_connectivity(result.data.left_midline_wpli);
+    result.data.avg_left_midline_anterior_wpli = average_connectivity(result.data.left_midline_anterior_wpli);
+    result.data.avg_left_midline_posterior_wpli = average_connectivity(result.data.left_midline_posterior_wpli);
+    
+    result.data.avg_right_lateral_wpli = average_connectivity(result.data.right_lateral_wpli);
+    result.data.avg_right_lateral_anterior_wpli = average_connectivity(result.data.right_lateral_anterior_wpli);
+    result.data.avg_right_lateral_posterior_wpli = average_connectivity(result.data.right_lateral_posterior_wpli);
+    
+    result.data.avg_right_midline_wpli = average_connectivity(result.data.right_midline_wpli);    
+    result.data.avg_right_midline_anterior_wpli = average_connectivity(result.data.right_midline_anterior_wpli);    
+    result.data.avg_right_midline_posterior_wpli = average_connectivity(result.data.right_midline_posterior_wpli);     
+    
+    % Calculating the ratio anterior / posterior for the four value
+    result.data.avg_left_lateral_ratio = result.data.avg_left_lateral_anterior_wpli / result.data.avg_left_lateral_posterior_wpli;
+    result.data.avg_left_midline_ratio = result.data.avg_left_midline_anterior_wpli / result.data.avg_left_midline_posterior_wpli;
+    result.data.avg_right_lateral_ratio = result.data.avg_right_lateral_anterior_wpli / result.data.avg_right_lateral_posterior_wpli;
+    result.data.avg_right_midline_ratio = result.data.avg_right_midline_anterior_wpli / result.data.avg_right_midline_posterior_wpli;
+end
+
+function [avg] = average_connectivity(matrix)
+    avg = mean(squeeze(mean(matrix,2)),2)';
 end
 
