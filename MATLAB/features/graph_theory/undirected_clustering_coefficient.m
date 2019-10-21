@@ -1,4 +1,4 @@
-function [c_coeff, norm_c_coeff] = undirected_clustering_coefficient(b_matrix,null_networks)
+function [c_coeff, norm_average_c_coeff] = undirected_clustering_coefficient(b_matrix,null_networks)
 %CLUSTERING_COEFFICIENT Will calculate the clusterig coefficient for th
 %binary matrix
 %   b_matrix: a N*N binary square matrix
@@ -14,8 +14,8 @@ function [c_coeff, norm_c_coeff] = undirected_clustering_coefficient(b_matrix,nu
         null_b_matrix = squeeze(null_networks(i,:,:));
         null_network_c_coeff(:,i) = clustering_coef_bu(null_b_matrix);
     end
-    avg_null_network_c_coeff = mean(null_network_c_coeff,2)
+    avg_null_network_c_coeff = mean(null_network_c_coeff,2);
     
-    norm_c_coeff = nanmean(c_coeff)/nanmean(avg_null_network_c_coeff); % binary clustering coefficient
+    norm_average_c_coeff = nanmean(c_coeff)/nanmean(avg_null_network_c_coeff); % binary clustering coefficient
 end
 
