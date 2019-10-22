@@ -1,29 +1,33 @@
-function [result] = na_dpli(recording, frequency_band, window_size, number_surrogate, p_value)
+function [result] = na_dpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value)
     %NA_dPLI NeuroAlgo implementation of dpli that works with Recording
-    % NOTE: right now we are only doing non-overlapping window (in sec)
-    % NOTE: We are also only doing fullband eeg
     
-    %% Setting configuration
+    %% Getting the Configuration
     configuration = get_configuration();
     
-    %% Setting the Results
+    %% Setting the Result
     result = Result('dpli', recording);
+    % Saving the parameters used
     result.parameters.frequency_band = frequency_band;
     result.parameters.window_size = window_size;
+    result.parameters.step_size = step_size;
     result.parameters.number_surrogate = number_surrogate;
     result.parameters.p_value = p_value;
     
     %% Filtering the data
     print(strcat("Filtering Data from ",string(frequency_band(1)), "Hz to ", string(frequency_band(2)), "Hz."),configuration.is_verbose);
     filtered_data = recording.filter_data(recording.data, frequency_band);
-    windowed_data = recording.create_window(filtered_data, window_size);
+    %% Slice the recording into windows
+    windowed_data = recording.create_sliding_window(filtered_data, window_size, step_size);
     [number_window,~,~] = size(windowed_data);
+    
     %% Calculation on the windowed segments
     result.data.dpli = zeros(number_window, recording.number_channels, recording.number_channels);
     for i = 1:number_window
        print(strcat("dPLI at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
+       % Calculate the dpli
        segment_data = squeeze(windowed_data(i,:,:));
        segment_wpli = dpli(segment_data, number_surrogate, p_value); 
+       % Storing the dpli
        result.data.dpli(i,:,:) = segment_wpli;
     end
     
@@ -100,9 +104,3 @@ function [result] = na_dpli(recording, frequency_band, window_size, number_surro
     result.data.avg_right_lateral_ratio = result.data.avg_right_lateral_anterior_dpli / result.data.avg_right_lateral_posterior_dpli;
     result.data.avg_right_midline_ratio = result.data.avg_right_midline_anterior_dpli / result.data.avg_right_midline_posterior_dpli;
 end
-
-function [avg] = average_connectivity(matrix)
-    avg = mean(squeeze(mean(matrix,2)),2)';
-end
-
-

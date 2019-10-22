@@ -99,8 +99,3 @@ function [result] = na_wpli(recording, frequency_band, window_size, step_size, n
     result.data.avg_right_lateral_ratio = result.data.avg_right_lateral_anterior_wpli / result.data.avg_right_lateral_posterior_wpli;
     result.data.avg_right_midline_ratio = result.data.avg_right_midline_anterior_wpli / result.data.avg_right_midline_posterior_wpli;
 end
-
-function [avg] = average_connectivity(matrix)
-    avg = mean(squeeze(mean(matrix,2)),2)';
-end
-

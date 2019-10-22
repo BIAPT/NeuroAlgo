@@ -1,11 +1,15 @@
 function [configuration] = get_configuration()
-%GET_CONFIGURATION Summary of this function goes here
-%   Detailed explanation goes here
-    [filepath,name,ext] = fileparts(mfilename('fullpath'));
-    configuration_path = strcat(filepath,'/configuration.txt');
+%GET_CONFIGURATION Getter for the configuration data
+%   This will parse the configuration.txt file to get the right variables
+%   out
+
+    %% Variables Intialization
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    configuration_path = strcat(filepath,'../configuration.txt');
     file_id = fopen(configuration_path);
     
     configuration.is_verbose = get_is_verbose(file_id);
+    configuration.saving_directory = get_saving_directory(file_id);
     configuration.bandpass = get_bandpass(file_id);
     
     fclose(file_id);
