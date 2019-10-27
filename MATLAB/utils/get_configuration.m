@@ -5,11 +5,11 @@ function [configuration] = get_configuration()
 
     %% Variables Intialization
     [filepath,~,~] = fileparts(mfilename('fullpath'));
-    configuration_path = strcat(filepath,'../configuration.txt');
+    configuration_path = strcat(filepath,'/../configuration.txt');
     file_id = fopen(configuration_path);
     
     configuration.is_verbose = get_is_verbose(file_id);
-    configuration.saving_directory = get_saving_directory(file_id);
+    %configuration.saving_directory = get_saving_directory(file_id);
     configuration.bandpass = get_bandpass(file_id);
     
     fclose(file_id);

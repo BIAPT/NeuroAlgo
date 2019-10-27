@@ -1,4 +1,4 @@
-function [power] = topographic_distribution(eeg_data,sampling_rate, channels_location, frequency)
+function [power] = topographic_distribution(eeg_data,sampling_rate)
 %TOPOGRAPHIC_DISTRIBUTION Calculate the ratio of front to back power at a
 %specific frequency
 %   Input:
@@ -12,10 +12,7 @@ function [power] = topographic_distribution(eeg_data,sampling_rate, channels_loc
 %       electrodes
 
     %% Spectral topographic map
-    [power,~,~,~,~] = spectopo(eeg_data,length(eeg_data),...,
-                              sampling_rate,'chanlocs',...,
-                              channels_location,'freqfac',1,...,
-                              'freq',frequency,'plot','off');
+    [power,~,~,~,~] = spectopo(eeg_data,length(eeg_data),sampling_rate,'plot','off');
     
 end
 
