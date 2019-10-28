@@ -9,6 +9,11 @@ classdef Recording
         number_channels;
         channels_location;
         creation_date;
+        
+        window_size;
+        step_size;
+        max_number_window;
+        current_window;
     end
     
     methods
@@ -140,6 +145,22 @@ classdef Recording
                 index = index + 1;
             end
         end
+        
+        % These two functions are used when the size of the data doesn't
+        % fit in RAM
+        function obj = init_sliding_window(obj, window_size, step_size)
+            obj.window_size = window_size*obj.sampling_rate;
+            obj.step_size = step_size*obj.sampling_rate;
+            obj.max_number_window = length(1:obj.step_size:(obj.length_recording - obj.window_size));
+            obj.current_window = 1;
+        end
+        
+        function [obj,windowed_data] = get_next_window(obj)
+            i = obj.current_window;
+            windowed_data = obj.data(:,i:i+obj.window_size-1);
+            obj.current_window = obj.current_window + obj.step_size;
+        end
+        
         
         function [filtered_data] = filter_data(obj, data, frequency_band)
             
