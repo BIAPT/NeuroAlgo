@@ -130,7 +130,7 @@ classdef Recording
         
         % This function is to get non-overlapping windowed data
         function [windowed_data] = create_window(obj, data, window_size)
-            [windowed_data] = create_sliding_window(obj, data, window_size, window_size)
+            [windowed_data] = create_sliding_window(obj, data, window_size, window_size);
         end
         
         % This function is to get overlapping windowed data

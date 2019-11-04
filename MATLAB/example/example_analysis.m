@@ -32,7 +32,7 @@ frequency_band = [7 13]; % This is in Hz
 window_size = 10; % This is in seconds and will be how we chunk the whole dataset
 number_surrogate = 10; % Number of surrogate wPLI to create
 p_value = 0.05; % the p value to make our test on
-step_size = 10;
+step_size = window_size;
 result_wpli = na_wpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
 
 % dPLI
@@ -40,7 +40,8 @@ frequency_band = [7 13]; % This is in Hz
 window_size = 10; % This is in seconds and will be how we chunk the whole dataset
 number_surrogate = 1; % Number of surrogate wPLI to create
 p_value = 0.05; % the p value to make our test on
-result_dpli = na_dpli(recording, frequency_band, window_size, number_surrogate, p_value);
+step_size = window_size;
+result_dpli = na_dpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
 
 % Hub Location (HL)
 frequency_band = [7 13]; % This is in Hz
@@ -74,8 +75,9 @@ result_spr = na_spectral_power_ratio(recording, window_size, time_bandwith_produ
 
 % Topographic Distribution (TD)
 window_size = 10; % in seconds
-frequency = 10; % in Hz
-result_td = na_topographic_distribution(recording, window_size, frequency);
+step_size = window_size; % in seconds
+bandpass = [8 13]; % in Hz
+result_td = na_topographic_distribution(recording, window_size, step_size, bandpass);
 
 % Note: You can put the value you want directly into the function call,
 % I've laid them out beforehand so that you understand what each value
