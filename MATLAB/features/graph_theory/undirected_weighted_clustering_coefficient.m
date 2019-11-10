@@ -5,7 +5,8 @@ function [c_coeff, norm_average_c_coeff] = undirected_weighted_clustering_coeffi
 %   null_networks: 3d matrix containing pre-made null_networks
                 
     %% Find Clustering coefficient
-    c_coeff = clustering_coef_wu(matrix);  
+    norm_matrix = weight_conversion(matrix, 'normalize');
+    c_coeff = clustering_coef_wu(norm_matrix);  
     
     %% Calculate the characteristic path length for each null_matrix and average them
     [number_null_network, ~, ~] = size(null_networks);
