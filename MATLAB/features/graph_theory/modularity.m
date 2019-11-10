@@ -5,7 +5,7 @@ function [community] = modularity(matrix)
 %   gamma: if large will detect smaller module, if small will detect larger
 %   module
 
-    [~,community] = community_louvain(matrix); % community, modularity
+    [~,community] = community_louvain(matrix,'negative_sym'); % community, modularity
 end
 
 
