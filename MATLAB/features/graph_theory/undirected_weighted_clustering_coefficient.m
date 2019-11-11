@@ -6,7 +6,7 @@ function [c_coeff, norm_average_c_coeff] = undirected_weighted_clustering_coeffi
                 
     %% Find Clustering coefficient
     
-    norm_matrix = normalize_matrix(matrix)
+    norm_matrix = normalize_matrix(matrix);
     c_coeff = clustering_coef_wu(norm_matrix);  
     
     %% Calculate the characteristic path length for each null_matrix and average them
@@ -19,6 +19,7 @@ function [c_coeff, norm_average_c_coeff] = undirected_weighted_clustering_coeffi
     end
     avg_null_network_c_coeff = mean(null_network_c_coeff,2);
     
+    c_coeff = c_coeff ./ avg_null_network_c_coeff; % normalize the clustering coefficient of every channel too
     norm_average_c_coeff = nanmean(c_coeff)/nanmean(avg_null_network_c_coeff); % weighted clustering coefficient
 end
 
