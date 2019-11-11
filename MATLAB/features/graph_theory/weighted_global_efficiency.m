@@ -6,7 +6,8 @@ function [g_efficiency, norm_g_efficiency, avg_path_length, norm_avg_path_length
 %   transform: either 'log' or 'inv' (see distance_wei_floy)
     
     %% Calculate the characteristic path length
-    input_distance = distance_wei_floyd(matrix,transform); 
+    norm_matrix = normalize_matrix(matrix);
+    input_distance = distance_wei_floyd(norm_matrix,transform); 
     [avg_path_length,g_efficiency,~,~,~] = charpath(input_distance,0,0); 
     
     %% Calculate the characteristic path length for each null_matrix and average them
@@ -16,8 +17,12 @@ function [g_efficiency, norm_g_efficiency, avg_path_length, norm_avg_path_length
     
     for i = 1:number_null_network
         null_w_matrix = squeeze(null_networks(i,:,:));
-        null_input_distance = distance_wei_floyd(null_w_matrix,transform);
-        [null_matrix_avg_path_length,null_matrix_g_efficiency,~,~,~] = charpath(null_input_distance,0,0);   % binary charpath    
+        
+        norm_null_matrix = normalize_matrix(null_w_matrix);
+        
+        null_input_distance = distance_wei_floyd(norm_null_matrix, transform);
+        [null_matrix_avg_path_length,null_matrix_g_efficiency,~,~,~] = charpath(null_input_distance,0,0);  
+        
         null_network_avg_path_length(i) = null_matrix_avg_path_length;
         null_network_g_efficiency(i) = null_matrix_g_efficiency;
     end
@@ -31,3 +36,9 @@ function [g_efficiency, norm_g_efficiency, avg_path_length, norm_avg_path_length
     norm_avg_path_length = avg_path_length/null_avg_path_length;
 end
 
+
+function [norm_matrix] = normalize_matrix(matrix)
+    %matrix = (matrix - min(matrix(:))) ./ (max(matrix(:)) - min(matrix(:)));
+    %norm_matrix = weight_conversion(matrix, 'normalize');
+    norm_matrix = abs(matrix);
+end
