@@ -27,6 +27,16 @@ recording = load_set('test_data.set',test_data_path);
     recording class take a look at the /source folder
 %}
 
+% Spectral Power
+window_size = 10;
+time_bandwith_product = 2;
+number_tapers = 3;
+spectrum_window_size = 3; % in seconds
+step_size = 0.1; % in seconds
+bandpass = [0.5 50];
+result_sp = na_spectral_power(recording, window_size, time_bandwith_product, number_tapers, spectrum_window_size, bandpass,step_size);
+
+
 % wPLI
 frequency_band = [7 13]; % This is in Hz
 window_size = 10; % This is in seconds and will be how we chunk the whole dataset
@@ -65,6 +75,16 @@ high_frequency_bandwith = [8 13];
 number_bins = 18;
 result_pac = na_phase_amplitude_coupling(recording, window_size, low_frequency_bandwith, high_frequency_bandwith, number_bins);
  
+% Spectral Power
+window_size = 10;
+time_bandwith_product = 2;
+number_tapers = 3;
+spectrum_window_size = 3; % in seconds
+step_size = 0.1; % in seconds
+bandpass = [0.5 50];
+result_sp = na_spectral_power(recording, window_size, time_bandwith_product, number_tapers, spectrum_window_size, bandpass,step_size);
+
+
 % Spectral Power Ratio (SPR)
 window_size = 10;
 time_bandwith_product = 2;
