@@ -5,6 +5,8 @@ function [c_coeff, norm_average_c_coeff] = undirected_weighted_clustering_coeffi
 %   null_networks: 3d matrix containing pre-made null_networks
                 
     %% Find Clustering coefficient
+    
+    matrix = (matrix - min(matrix(:))) ./ (max(matrix(:)) - min(matrix(:)));
     norm_matrix = weight_conversion(matrix, 'normalize');
     c_coeff = clustering_coef_wu(norm_matrix);  
     
@@ -13,6 +15,7 @@ function [c_coeff, norm_average_c_coeff] = undirected_weighted_clustering_coeffi
     null_network_c_coeff = zeros(length(c_coeff),number_null_network);
     for i = 1:number_null_network
         null_w_matrix = squeeze(null_networks(i,:,:));
+        
         null_network_c_coeff(:,i) = clustering_coef_wu(null_w_matrix);
     end
     avg_null_network_c_coeff = mean(null_network_c_coeff,2);
