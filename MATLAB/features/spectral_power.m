@@ -1,4 +1,4 @@
-function [avg_spectrum, spectrum] = spectral_power(eeg_data,sampling_rate, frequency_band,time_bandwith_product,number_tapers,window_size,step_size)
+function [avg_spectrum, spectrum, timestamp, frequency] = spectral_power(eeg_data,sampling_rate, frequency_band,time_bandwith_product,number_tapers,window_size,step_size)
 %SPECTRAL_POWER_RATIO calculate the spectral power ratio between the beta
 %and alpha band & between the alpha and theta band
     
@@ -12,7 +12,7 @@ function [avg_spectrum, spectrum] = spectral_power(eeg_data,sampling_rate, frequ
 
     %% Spectral Power
     params.fpass = frequency_band;
-    [spectrum, ~, ~] = mtspecgramc(eeg_data, window_parameters, params);
+    [spectrum, timestamp, frequency] = mtspecgramc(eeg_data, window_parameters, params);
     overall_spectrum = mean(spectrum,2);
     avg_spectrum = mean(overall_spectrum);
     
