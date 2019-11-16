@@ -14,6 +14,7 @@ function [result] = na_topographic_distribution(recording, window_size, step_siz
     %% Variable Initialization
     sampling_rate = recording.sampling_rate;
     channels_location = recording.channels_location;
+    
     % Here we init the sliding window slicing 
     recording = recording.init_sliding_window(window_size, step_size);
     number_window = recording.max_number_window;

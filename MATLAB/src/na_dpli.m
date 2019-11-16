@@ -15,18 +15,21 @@ function [result] = na_dpli(recording, frequency_band, window_size, step_size, n
     
     %% Filtering the data
     print(strcat("Filtering Data from ",string(frequency_band(1)), "Hz to ", string(frequency_band(2)), "Hz."),configuration.is_verbose);
-    filtered_data = recording.filter_data(recording.data, frequency_band);
+    recording = recording.filter_data(recording.data, frequency_band);
+    
     %% Slice the recording into windows
-    windowed_data = recording.create_sliding_window(filtered_data, window_size, step_size);
-    [number_window,~,~] = size(windowed_data);
+    % Here we init the sliding window slicing 
+    recording = recording.init_sliding_window(window_size, step_size);
+    number_window = recording.max_number_window;
     
     %% Calculation on the windowed segments
     result.data.dpli = zeros(number_window, recording.number_channels, recording.number_channels);
     for i = 1:number_window
        print(strcat("dPLI at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
        % Calculate the dpli
-       segment_data = squeeze(windowed_data(i,:,:));
+       [recording, segment_data] = recording.get_next_window();
        segment_wpli = dpli(segment_data, number_surrogate, p_value); 
+       
        % Storing the dpli
        result.data.dpli(i,:,:) = segment_wpli;
     end
@@ -35,6 +38,7 @@ function [result] = na_dpli(recording, frequency_band, window_size, step_size, n
     result.data.avg_dpli = squeeze(mean(result.data.dpli,1));
     
     %% Region specific wPLI
+    % TODO: This part is super ugly need to
 
     % General Mask for the filtering (pre-computed)
     is_left = [recording.channels_location.is_left];

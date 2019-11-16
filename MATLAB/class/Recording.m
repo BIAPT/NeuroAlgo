@@ -4,6 +4,7 @@ classdef Recording
     
     properties
         data;
+        filt_data;
         length_recording;
         sampling_rate;
         number_channels;
@@ -26,6 +27,8 @@ classdef Recording
             obj.channels_location = channels_location;
             obj.length_recording = length(data);
             obj.creation_date = posixtime(datetime());
+            
+            obj.filt_data = [];
             
             % Label whether the channels is anterior or posterior
             epsilon = 0.000001;
@@ -157,19 +160,25 @@ classdef Recording
         
         function [obj,windowed_data] = get_next_window(obj)
             i = obj.current_window;
-            windowed_data = obj.data(:,i:i+obj.window_size-1);
+            % here we decide if we slice the filtered data or the original
+            % data
+            if(isempty(obj.filt_data))
+                windowed_data = obj.data(:,i:i+obj.window_size-1);
+            else
+                windowed_data = obj.filt_data(:,i:i+obj.window_size-1);
+            end
+            
             obj.current_window = obj.current_window + obj.step_size;
         end
         
         
-        function [filtered_data] = filter_data(obj, data, frequency_band)
+        function [obj] = filter_data(obj, data, frequency_band)
             
             %% Variable Initialization
             low_frequency = frequency_band(1);
             high_frequency = frequency_band(2);
             sampling_frequency = obj.sampling_rate;
-            filtered_data = filter_bandpass(data, sampling_frequency, low_frequency, high_frequency);
-            
+            obj.filt_data  = filter_bandpass(data, sampling_frequency, low_frequency, high_frequency);
         end
     end
 end

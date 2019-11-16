@@ -18,15 +18,17 @@ function [result] = na_spectral_power_ratio(recording, window_size, time_bandwid
     
     %% Variable Initialization
     sampling_rate = recording.sampling_rate;
-    windowed_data = recording.create_window(recording.data, window_size);
-    [number_window,~,~] = size(windowed_data);
+    
+    % Here we init the sliding window slicing 
+    recording = recording.init_sliding_window(window_size, step_size);
+    number_window = recording.max_number_window;
     
     %% Calculation on the windowed segments
     result.data.ratio_beta_alpha = zeros(1, number_window);
     result.data.ratio_alpha_theta = zeros(1,number_window);
     for i = 1:number_window
        print(strcat("Spectral Power Ratios at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
-       segment_data = squeeze(windowed_data(i,:,:));
+       [recording, segment_data] = recording.get_next_window();
        
        avg_spectrum_alpha = spectral_power(segment_data,sampling_rate, alpha, time_bandwidth_product,number_tapers,spectrum_window_size,step_size); 
        avg_spectrum_beta = spectral_power(segment_data, sampling_rate, beta, time_bandwidth_product,number_tapers,spectrum_window_size,step_size);

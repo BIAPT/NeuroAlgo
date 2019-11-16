@@ -32,7 +32,7 @@ window_size = 10;
 time_bandwith_product = 2;
 number_tapers = 3;
 spectrum_window_size = 3; % in seconds
-step_size = 0.1; % in seconds
+step_size = 5; % in seconds
 bandpass = [0.5 50];
 result_sp = na_spectral_power(recording, window_size, time_bandwith_product, number_tapers, spectrum_window_size, bandpass,step_size);
 
@@ -59,38 +59,31 @@ window_size = 10; % This is in seconds and will be how we chunk the whole datase
 number_surrogate = 10; % Number of surrogate wPLI to create
 p_value = 0.05; % the p value to make our test on
 threshold = 0.10; % This is the threshold at which we binarize the graph
-result_hl = na_hub_location(recording, frequency_band, window_size, number_surrogate, p_value, threshold);
+step_size = 10;
+result_hl = na_hub_location(recording, frequency_band, window_size, step_size, number_surrogate, p_value, threshold);
 
 % Permutation Entropy (PE)
 frequency_band = [7 13]; % This is in Hz
 window_size = 10; % This is in seconds and will be how we chunk the whole dataset
 embedding_dimension = 5;
 time_lag = 4;
-result_pe = na_permutation_entropy(recording, frequency_band, window_size ,embedding_dimension, time_lag);
+step_size = 10;
+result_pe = na_permutation_entropy(recording, frequency_band, window_size , step_size, embedding_dimension, time_lag);
 
 % Phase Amplitude Coupling (PAC)
 window_size = 10;
 low_frequency_bandwith =[0.1 1];
 high_frequency_bandwith = [8 13];
 number_bins = 18;
-result_pac = na_phase_amplitude_coupling(recording, window_size, low_frequency_bandwith, high_frequency_bandwith, number_bins);
- 
-% Spectral Power
-window_size = 10;
-time_bandwith_product = 2;
-number_tapers = 3;
-spectrum_window_size = 3; % in seconds
-step_size = 0.1; % in seconds
-bandpass = [0.5 50];
-result_sp = na_spectral_power(recording, window_size, time_bandwith_product, number_tapers, spectrum_window_size, bandpass,step_size);
-
+step_size = 10;
+result_pac = na_phase_amplitude_coupling(recording, window_size, step_size, low_frequency_bandwith, high_frequency_bandwith, number_bins);
 
 % Spectral Power Ratio (SPR)
 window_size = 10;
 time_bandwith_product = 2;
 number_tapers = 3;
 spectrum_window_size = 3; % in seconds
-step_size = 0.1; % in seconds
+step_size = 5; % in seconds
 result_spr = na_spectral_power_ratio(recording, window_size, time_bandwith_product, number_tapers, spectrum_window_size, step_size);
 
 % Topographic Distribution (TD)

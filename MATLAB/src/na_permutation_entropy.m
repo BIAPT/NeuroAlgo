@@ -1,4 +1,4 @@
-function [result] = na_permutation_entropy(recording, frequency_band, window_size,embedding_dimension, time_lag )
+function [result] = na_permutation_entropy(recording, frequency_band, window_size, step_size, embedding_dimension, time_lag )
     %NA_PERMUTATION_ENTROPY NeuroAlgo implementation of wpli that works with Recording
     % NOTE: right now we are only doing non-overlapping window (in sec)
     % NOTE: We are also only doing fullband eeg
@@ -18,9 +18,11 @@ function [result] = na_permutation_entropy(recording, frequency_band, window_siz
     
     %% Filtering the data
     print(strcat("Filtering Data from ",string(frequency_band(1)), "Hz to ", string(frequency_band(2)), "Hz."),configuration.is_verbose);
-    filtered_data = recording.filter_data(recording.data, frequency_band);
-    windowed_data = recording.create_window(filtered_data, window_size);
-    [number_window,~,~] = size(windowed_data);
+    [recording] = recording.filter_data(recording.data, frequency_band);
+    
+    % Here we init the sliding window slicing 
+    recording = recording.init_sliding_window(window_size, step_size);
+    number_window = recording.max_number_window;
     
     anterior_mask = ([channels_location.is_anterior] == 1);
     posterior_mask = ([channels_location.is_posterior] == 1);
@@ -33,7 +35,9 @@ function [result] = na_permutation_entropy(recording, frequency_band, window_siz
     
     for i = 1:number_window
        print(strcat("Permutation Entropy at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
-       segment_data = squeeze(windowed_data(i,:,:));
+       [recording, segment_data] = recording.get_next_window();
+       
+       % Calculate the permutation entropy
        [pe, normalized_pe] = permutation_entropy(segment_data, embedding_dimension, time_lag); 
        result.data.permutation_entropy(i,:,:) = pe;
        
