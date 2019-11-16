@@ -18,14 +18,14 @@ function bins = binit(data_in, N)
 % 1. Segment the signal in N equal length parts
 % 2. Compute average signal on each segment
 
-% Length of the signal
-sigLength = length(data_in);
-% Compute length of each segment
-segLength = floor(sigLength/N);
+    % Length of the signal
+    signal_length = length(data_in);
+    % Compute length of each segment
+    segment_length = floor(signal_length/N);
 
-bins = mean(data_in(1:segLength));
-for n = 1:N-1
-    bins(n+1) = mean(data_in(n*segLength:(n+1)*segLength)); 
-end
+    bins = mean(data_in(1:segment_length));
+    for n = 1:N-1
+        bins(n+1) = mean(data_in(n*segment_length:(n+1)*segment_length)); 
+    end
 
 end
