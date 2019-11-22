@@ -2,12 +2,10 @@ function [corrected_dpli] = dpli(eeg_data, number_surrogates, p_value)
 %DPLI calculate weighted PLI and do some correction
 %   Input:
 %       eeg_data: data to calculate pli on
-%       eeg_info: info about the headset
 %       number_surrogates: number of surrogates dpli to create
 %       p_value: p value to do the testing with the number of surrogates
 %   Output:
-%       corrected_wpli: PLI with a correction (either p value or
-%       substraction)
+%       corrected_dpli: dPLI with a correction 
 
     %% Seting up variables
     number_channels = size(eeg_data,1);
@@ -38,17 +36,19 @@ function [corrected_dpli] = dpli(eeg_data, number_surrogates, p_value)
     %4.dPLI is smaller than 0.5 and median of surrogate is greater
     %than 0.5
     for m = 1:length(uncorrected_dpli)
-        for n = 1:length(uncorrected_dpli)
+        for n = m:length(uncorrected_dpli)
             test = surrogates_dpli(:,m,n);
             p = signrank(test, uncorrected_dpli(m,n)); 
-            if p < p_value % 4 Conditions 
+            if m == n
+                corrected_dpli(m,n) = 0.5;
+            elseif p < p_value % 4 Conditions 
                 if uncorrected_dpli(m,n) > 0.5 && median(test) > 0.5
                     gap = uncorrected_dpli(m,n) - median(test);
-                        if(gap < 0)
-                            corrected_dpli(m,n) = 0.5; 
-                        else
-                            corrected_dpli(m,n) = gap + 0.5; %Gap is positive here
-                        end  
+                    if(gap < 0)
+                        corrected_dpli(m,n) = 0.5; 
+                    else
+                        corrected_dpli(m,n) = gap + 0.5; %Gap is positive here
+                    end  
                 elseif uncorrected_dpli(m,n) < 0.5 && median(test) < 0.5 % CASE 2
                     gap = uncorrected_dpli(m,n) - median(test);
                     if(gap > 0)
@@ -63,11 +63,23 @@ function [corrected_dpli] = dpli(eeg_data, number_surrogates, p_value)
                     extra = median(test) - 0.5;
                     corrected_dpli(m,n) = uncorrected_dpli(m,n) - extra;
                 end
+                
+                % Here we correct for out of bound behavior
+                if(corrected_dpli(m,n) < 0)
+                    corrected_dpli(m,n) = 0;
+                elseif(corrected_dpli(m,n) > 1)
+                   corrected_dpli(m,n) = 1; 
+                end
             else
                 corrected_dpli(m,n) = 0.5;
             end
+            
+            % Here we apply what happen in the upper triangle to the lower
+            % triangle (this will ensure symmetry)
+            corrected_dpli(n,m) = 1 - corrected_dpli(m,n);
         end
     end
+    
 end
 
 function pli = directed_phase_lag_index(data)
