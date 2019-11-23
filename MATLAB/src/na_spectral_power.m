@@ -23,7 +23,7 @@ function [result] = na_spectral_power(recording, window_size, time_bandwidth_pro
     result.data.avg_spectrums = zeros(1,number_window);
     result.data.spectrums = [];
     for i = 1:number_window
-       print(strcat("Spectral Power at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
+       print_message(strcat("Spectral Power at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
        [recording, segment_data] = recording.get_next_window();
        
        [avg_spectrum,spectrum,timestamp,frequency] = spectral_power(segment_data,sampling_rate, bandpass, time_bandwidth_product,number_tapers,spectrum_window_size,step_size); 

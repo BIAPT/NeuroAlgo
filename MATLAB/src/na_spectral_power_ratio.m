@@ -27,7 +27,7 @@ function [result] = na_spectral_power_ratio(recording, window_size, time_bandwid
     result.data.ratio_beta_alpha = zeros(1, number_window);
     result.data.ratio_alpha_theta = zeros(1,number_window);
     for i = 1:number_window
-       print(strcat("Spectral Power Ratios at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
+       print_message(strcat("Spectral Power Ratios at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
        [recording, segment_data] = recording.get_next_window();
        
        avg_spectrum_alpha = spectral_power(segment_data,sampling_rate, alpha, time_bandwidth_product,number_tapers,spectrum_window_size,step_size); 

@@ -14,7 +14,7 @@ function [result] = na_dpli(recording, frequency_band, window_size, step_size, n
     result.parameters.p_value = p_value;
     
     %% Filtering the data
-    print(strcat("Filtering Data from ",string(frequency_band(1)), "Hz to ", string(frequency_band(2)), "Hz."),configuration.is_verbose);
+    print_message(strcat("Filtering Data from ",string(frequency_band(1)), "Hz to ", string(frequency_band(2)), "Hz."),configuration.is_verbose);
     recording = recording.filter_data(recording.data, frequency_band);
     
     %% Slice the recording into windows
@@ -25,7 +25,7 @@ function [result] = na_dpli(recording, frequency_band, window_size, step_size, n
     %% Calculation on the windowed segments
     result.data.dpli = zeros(number_window, recording.number_channels, recording.number_channels);
     for i = 1:number_window
-       print(strcat("dPLI at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
+       print_message(strcat("dPLI at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
        % Calculate the dpli
        [recording, segment_data] = recording.get_next_window();
        segment_wpli = dpli(segment_data, number_surrogate, p_value); 

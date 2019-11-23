@@ -14,7 +14,7 @@ function [result] = na_hub_location(recording, frequency_band, window_size, step
     result.parameters.threshold = threshold;
     
     %% Filtering the data
-    print(strcat("Filtering Data from ",string(frequency_band(1)), "Hz to ", string(frequency_band(2)), "Hz."),configuration.is_verbose);
+    print_message(strcat("Filtering Data from ",string(frequency_band(1)), "Hz to ", string(frequency_band(2)), "Hz."),configuration.is_verbose);
     [recording] = recording.filter_data(recording.data, frequency_band);
     
     % Here we init the sliding window slicing 
@@ -28,7 +28,7 @@ function [result] = na_hub_location(recording, frequency_band, window_size, step
     result.data.hub_relative_position = zeros(1,number_window);
     result.data.graph = zeros(number_window, recording.number_channels, recording.number_channels);
     for i = 1:number_window
-       print(strcat("Hub Location at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
+       print_message(strcat("Hub Location at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
        [recording, segment_data] = recording.get_next_window();
        
        % Calculating hub data for the segment

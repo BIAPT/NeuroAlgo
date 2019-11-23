@@ -25,7 +25,7 @@ function [result] = na_topographic_distribution(recording, window_size, step_siz
     result.data.avg_power_ratio_front_posterior = zeros(1, number_window);
     result.data.power = zeros(number_window, recording.number_channels);
     for i = 1:number_window
-       print(strcat("Topographic Distribution at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
+       print_message(strcat("Topographic Distribution at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
        [recording, segment_data] = recording.get_next_window();
        power = topographic_distribution(segment_data, sampling_rate);
        bandpass_power = squeeze(mean(power(:,bandpass(1):bandpass(2)),2));

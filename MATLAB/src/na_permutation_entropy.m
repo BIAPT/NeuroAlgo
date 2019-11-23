@@ -17,7 +17,7 @@ function [result] = na_permutation_entropy(recording, frequency_band, window_siz
     channels_location = recording.channels_location;
     
     %% Filtering the data
-    print(strcat("Filtering Data from ",string(frequency_band(1)), "Hz to ", string(frequency_band(2)), "Hz."),configuration.is_verbose);
+    print_message(strcat("Filtering Data from ",string(frequency_band(1)), "Hz to ", string(frequency_band(2)), "Hz."),configuration.is_verbose);
     [recording] = recording.filter_data(recording.data, frequency_band);
     
     % Here we init the sliding window slicing 
@@ -34,7 +34,7 @@ function [result] = na_permutation_entropy(recording, frequency_band, window_siz
     result.data.avg_permutation_entropy_posterior = zeros(1,number_window); 
     
     for i = 1:number_window
-       print(strcat("Permutation Entropy at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
+       print_message(strcat("Permutation Entropy at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
        [recording, segment_data] = recording.get_next_window();
        
        % Calculate the permutation entropy

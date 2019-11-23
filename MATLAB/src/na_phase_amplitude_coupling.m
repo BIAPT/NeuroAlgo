@@ -32,7 +32,7 @@ function [result] = na_phase_amplitude_coupling(recording, window_size, step_siz
     result.data.ratio_peak_through_posterior = zeros(1,number_window);
     
     for i = 1:number_window
-        print(strcat("Phase Amplitude Coupling at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
+        print_message(strcat("Phase Amplitude Coupling at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
         [recording, segment_data] = recording.get_next_window();
        
         % Whole head
