@@ -41,12 +41,14 @@ function [result] = na_phase_amplitude_coupling(recording, window_size, step_siz
         result.data.ratio_peak_through_all(i) = ratio_peak_through_all;
        
         % Only the anterior part
-        [modulogram_anterior, ratio_peak_through_anterior] = phase_amplitude_coupling(segment_data(anterior_mask),sampling_rate, low_frequency_bandwidth, high_frequency_bandwidth, number_bins);
+        anterior_segment_data = segment_data(anterior_mask,:);
+        [modulogram_anterior, ratio_peak_through_anterior] = phase_amplitude_coupling(anterior_segment_data,sampling_rate, low_frequency_bandwidth, high_frequency_bandwidth, number_bins);
         result.data.modulogram_anterior(i,:) = modulogram_anterior;
         result.data.ratio_peak_through_anterior(i) = ratio_peak_through_anterior;
         
         % Only the posterior part
-        [modulogram_posterior, ratio_peak_through_posterior] = phase_amplitude_coupling(segment_data(posterior_mask),sampling_rate, low_frequency_bandwidth, high_frequency_bandwidth, number_bins);
+        posterior_segment_data = segment_data(posterior_mask,:);
+        [modulogram_posterior, ratio_peak_through_posterior] = phase_amplitude_coupling(posterior_segment_data,sampling_rate, low_frequency_bandwidth, high_frequency_bandwidth, number_bins);
         result.data.modulogram_posterior(i,:) = modulogram_posterior;
         result.data.ratio_peak_through_posterior(i) = ratio_peak_through_posterior;
     end
