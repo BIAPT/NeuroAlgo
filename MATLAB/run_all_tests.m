@@ -9,4 +9,4 @@
 % Here we are making sure that the parameters we have used before are still
 % correct. If they are not correct we will need to change the test and
 % update the documentation
-runtests('script_parameters_test');
+runtests('parameters_test');
