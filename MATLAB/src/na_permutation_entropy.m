@@ -24,8 +24,12 @@ function [result] = na_permutation_entropy(recording, frequency_band, window_siz
     recording = recording.init_sliding_window(window_size, step_size);
     number_window = recording.max_number_window;
     
-    anterior_mask = ([channels_location.is_anterior] == 1);
-    posterior_mask = ([channels_location.is_posterior] == 1);
+    % if we don't have channels location we skip the part below
+    if(~isempty(recording.channels_location))
+        anterior_mask = ([channels_location.is_anterior] == 1);
+        posterior_mask = ([channels_location.is_posterior] == 1);
+    end
+
     
     %% Calculation on the windowed segments
     result.data.permutation_entropy = zeros(number_window, recording.number_channels);
@@ -43,6 +47,11 @@ function [result] = na_permutation_entropy(recording, frequency_band, window_siz
        
        % Saving the information
        result.data.normalized_permutation_entropy(i,:,:) = normalized_pe;
+       % if we don't have channels location we skip the part below
+       if(isempty(recording.channels_location))
+           continue
+       end
+       
        result.data.avg_permutation_entropy_anterior(i) = mean(normalized_pe(anterior_mask));
        result.data.avg_permutation_entropy_posterior(i) = mean(normalized_pe(posterior_mask));
     end

@@ -30,6 +30,15 @@ classdef Recording
             
             obj.filt_data = [];
             
+            % Precompute some label to ease up the analysis that require
+            % channels at specific location
+            if(~isempty(channels_location))
+                obj = obj.compute_region_label();
+            end
+        end
+        
+        %% Helper Function
+        function  obj = compute_region_label(obj)
             % Label whether the channels is anterior or posterior
             epsilon = 0.000001;
             for i = 1:obj.number_channels
@@ -71,7 +80,6 @@ classdef Recording
             end
         end
         
-        %% Helper Function
         function [is_midline, is_lateral] = get_left_region(obj,x,y)
             % Variable Initialization
             is_midline = 0;

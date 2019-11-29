@@ -20,8 +20,10 @@ function [result] = na_phase_amplitude_coupling(recording, window_size, step_siz
     recording = recording.init_sliding_window(window_size, step_size);
     number_window = recording.max_number_window;
     
-    anterior_mask = ([channels_location.is_anterior] == 1);
-    posterior_mask = ([channels_location.is_posterior] == 1);
+   if(~isempty(recording.channels_location))
+        anterior_mask = ([channels_location.is_anterior] == 1);
+        posterior_mask = ([channels_location.is_posterior] == 1);
+   end
     
     %% Calculation on the windowed segments
     result.data.modulogram_all = zeros(number_window, number_bins);
@@ -39,7 +41,11 @@ function [result] = na_phase_amplitude_coupling(recording, window_size, step_siz
         [modulogram_all, ratio_peak_through_all] = phase_amplitude_coupling(segment_data,sampling_rate, low_frequency_bandwidth, high_frequency_bandwidth, number_bins);
         result.data.modulogram_all(i,:) = modulogram_all;
         result.data.ratio_peak_through_all(i) = ratio_peak_through_all;
-       
+        
+        % if we don't have channels location we skip the part below
+        if(isempty(recording.channels_location))
+            continue
+        end
         % Only the anterior part
         anterior_segment_data = segment_data(anterior_mask,:);
         [modulogram_anterior, ratio_peak_through_anterior] = phase_amplitude_coupling(anterior_segment_data,sampling_rate, low_frequency_bandwidth, high_frequency_bandwidth, number_bins);

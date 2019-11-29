@@ -38,6 +38,11 @@ function [result] = na_wpli(recording, frequency_band, window_size, step_size, n
     
     %% Region specific wPLI
 
+    % if we don't have channels location we get out
+    if(isempty(recording.channels_location))
+        return;
+    end
+    
     % General Mask for the filtering (pre-computed)
     is_left = [recording.channels_location.is_left];
     is_right = [recording.channels_location.is_right];
