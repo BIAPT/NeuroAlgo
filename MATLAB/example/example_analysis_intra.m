@@ -40,7 +40,7 @@ result_sp = na_spectral_power(recording, window_size, time_bandwith_product, num
 % wPLI
 frequency_band = [7 13]; % This is in Hz
 window_size = 10; % This is in seconds and will be how we chunk the whole dataset
-number_surrogate = 10; % Number of surrogate wPLI to create
+number_surrogate = 20; % Number of surrogate wPLI to create
 p_value = 0.05; % the p value to make our test on
 step_size = window_size;
 result_wpli = na_wpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
@@ -48,7 +48,7 @@ result_wpli = na_wpli(recording, frequency_band, window_size, step_size, number_
 % dPLI
 frequency_band = [7 13]; % This is in Hz
 window_size = 10; % This is in seconds and will be how we chunk the whole dataset
-number_surrogate = 1; % Number of surrogate wPLI to create
+number_surrogate = 20; % Number of surrogate wPLI to create
 p_value = 0.05; % the p value to make our test on
 step_size = window_size;
 result_dpli = na_dpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
