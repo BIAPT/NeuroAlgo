@@ -12,6 +12,7 @@ function [result] = na_hub_location(recording, frequency_band, window_size, step
     result.parameters.number_surrogate = number_surrogate;
     result.parameters.p_value = p_value;
     result.parameters.threshold = threshold;
+    result.parameters.step_size = step_size;
     
     %% Filtering the data
     print_message(strcat("Filtering Data from ",string(frequency_band(1)), "Hz to ", string(frequency_band(2)), "Hz."),configuration.is_verbose);
