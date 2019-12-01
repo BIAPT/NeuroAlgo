@@ -31,8 +31,8 @@ function [intensity, coherence, frequency, norm_intensity, norm_coherence, norm_
     cat_rand_coherence = squeeze(cat_rand_coherence)';    
     cat_rand_frequency = squeeze(cat_rand_frequency)';
 
-    norm_intensity = (mean(intensity') - mean(cat_rand_intensity) ./ std(cat_rand_intensity);    
-    norm_coherence = (mean(coherence') - mean(cat_rand_coherence) ./ std(cat_rand_coherence);
-    norm_frequency = (mean(frequency') - mean(cat_rand_frequency) ./ std(cat_rand_frequency);
+    norm_intensity = (mean(intensity') - mean(cat_rand_intensity)) ./ std(cat_rand_intensity);    
+    norm_coherence = (mean(coherence') - mean(cat_rand_coherence)) ./ std(cat_rand_coherence);
+    norm_frequency = (mean(frequency') - mean(cat_rand_frequency)) ./ std(cat_rand_frequency);
     
 end
