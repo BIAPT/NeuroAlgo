@@ -101,15 +101,8 @@ for u=1:n-2                               	%loop u 1:n-2
 
             % Here we increment the source and target for motif 7
             if(ismember(7,idu))
-               v1_source = w(1) + w(6);
-               v2_source = w(2) + w(4);
-               u_source = w(3) + w(5);
-               source(7, [u v1 v2]) = source(7, [u v1 v2]) + [u_source v1_source v2_source]; % every channel is a source
-               
-               v1_target = w(3) + w(4);
-               v2_target = w(5) + w(6);
-               u_target = w(1) + w(2);
-               target(7, [u v1 v2]) = target(7, [u v1 v2]) + [u_target v1_target v2_target]; % every channel is also a target
+               source(7, [u v1 v2]) = source(7, [u v1 v2]) + [1 1 1]; % every channel is a source            
+               target(7, [u v1 v2]) = target(7, [u v1 v2]) + [1 1 1]; % every channel is also a target
             end
             
             if(ismember(1,idu))
