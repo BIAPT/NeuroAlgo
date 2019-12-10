@@ -36,7 +36,7 @@ function [corrected_dpli] = dpli(eeg_data, number_surrogates, p_value)
     %4.dPLI is smaller than 0.5 and median of surrogate is greater
     %than 0.5
     for m = 1:length(uncorrected_dpli)
-        for n = m:length(uncorrected_dpli)
+        for n = 1:length(uncorrected_dpli)
             test = surrogates_dpli(:,m,n);
             p = signrank(test, uncorrected_dpli(m,n)); 
             if m == n
@@ -59,27 +59,30 @@ function [corrected_dpli] = dpli(eeg_data, number_surrogates, p_value)
                 elseif uncorrected_dpli(m,n) > 0.5 && median(test) < 0.5 %CASE 3
                     extra = 0.5 - median(test);
                     corrected_dpli(m,n) = uncorrected_dpli(m,n) + extra;
+                    % Here might be the problem
                 elseif uncorrected_dpli(m,n) < 0.5 && median(test) > 0.5 %CASE 4
                     extra = median(test) - 0.5;
                     corrected_dpli(m,n) = uncorrected_dpli(m,n) - extra;
+                    % Here also might be the problem
                 end
                 
                 % Here we correct for out of bound behavior
+                %{
                 if(corrected_dpli(m,n) < 0)
                     corrected_dpli(m,n) = 0;
                 elseif(corrected_dpli(m,n) > 1)
                    corrected_dpli(m,n) = 1; 
                 end
+                %}
             else
                 corrected_dpli(m,n) = 0.5;
             end
             
             % Here we apply what happen in the upper triangle to the lower
             % triangle (this will ensure symmetry)
-            corrected_dpli(n,m) = 1 - corrected_dpli(m,n);
+            %corrected_dpli(n,m) = 1 - corrected_dpli(m,n);
         end
     end
-    
 end
 
 function pli = directed_phase_lag_index(data)

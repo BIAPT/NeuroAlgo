@@ -1,4 +1,4 @@
-function [intensity,coherence,frequency, source, target, distance] = motif3funct_wei_augmented(W)
+function [intensity,coherence,frequency, source, target, distance] = motif3funct_wei_augmented(W, channels_location)
 %MOTIF3FUNCT_WEI       Intensity and coherence of functional class-3 motifs
 %   Suppose to output also the source, target and distance
 %   [intensity, coherence, frequency] = motif3funct_wei_augmented(W);
@@ -99,10 +99,31 @@ for u=1:n-2                               	%loop u 1:n-2
             q2=i2; 
             f2=i2;
 
+            % Calculate the distance between all
+            %[A(v1,u);A(v2,u);A(u,v1);A(v2,v1);A(u,v2);A(v1,v2)];
+            loc_v1 = [channels_location(v1).X channels_location(v1).Y channels_location(v1).Z];
+            loc_u = [channels_location(u).X channels_location(u).Y channels_location(u).Z];
+            loc_v2 = [channels_location(v2).X channels_location(v2).Y channels_location(v2).Z];
+            
+            d_v1_u = channels_distance(loc_v1, loc_u);
+            d_v2_u = channels_distance(loc_v2, loc_u);
+            d_u_v1 = d_v1_u;
+            d_v2_v1 = channels_distance(loc_v2, loc_v1);
+            d_u_v2 = d_v2_u;
+            d_v1_v2 = d_v2_v1;
+            
+            distances = [d_v1_u; d_v2_u; d_u_v1; d_v2_v1; d_u_v2; d_v1_v2].*a; % this will set to 0 those that are not connected
+            
+
+            
             % Here we increment the source and target for motif 7
             if(ismember(7,idu))
                source(7, [u v1 v2]) = source(7, [u v1 v2]) + [1 1 1]; % every channel is a source            
                target(7, [u v1 v2]) = target(7, [u v1 v2]) + [1 1 1]; % every channel is also a target
+            
+               distance(7, u) = distance(7, u) + distances(1) + distances(2) + distance(3) + distances(5);
+               distance(7, v1) = distance(7, v1) + distance(1) + distances(3) + distances(4) + distances(6);
+               distance(7, v2) = distance(7, v2) + distances(2) + distances(4) + distances(5) + distances(6);
             end
             
             if(ismember(1,idu))
@@ -123,6 +144,10 @@ for u=1:n-2                               	%loop u 1:n-2
                 
                 source(1, [u v1 v2]) = source(1, [u v1 v2]) + source_score;
                 target(1, [u v1 v2]) = target(1, [u v1 v2]) + target_score;
+                
+                distance(1, u) = distance(1, u) + distances(1) + distances(2) + distance(3) + distances(5);
+                distance(1, v1) = distance(1, v1) + distance(1) + distances(3) + distances(4) + distances(6);
+                distance(1, v2) = distance(1, v2) + distances(2) + distances(4) + distances(5) + distances(6);
             end
             
             for h=1:mu                      %for each unique motif

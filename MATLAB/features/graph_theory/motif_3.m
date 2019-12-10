@@ -1,8 +1,8 @@
-function [intensity, coherence, frequency, source, target, distance] = motif_3(network,number_rand_network, bin_swaps, weight_frequency)
+function [intensity, coherence, frequency, source, target, distance] = motif_3(network,channels_location, number_rand_network, bin_swaps, weight_frequency)
 %MOTIF_3    
     
     %% 1) Calculate the motif for our network of interest.
-    [intensity,coherence,frequency,source,target,distance] = motif3funct_wei_augmented(network);
+    [intensity,coherence,frequency,source,target,distance] = motif3funct_wei_augmented(network, channels_location);
     
     % Create the matrices
     rand_intensity = zeros(number_rand_network,13,length(network));
@@ -13,7 +13,7 @@ function [intensity, coherence, frequency, source, target, distance] = motif_3(n
     parfor i = 1:number_rand_network
         [rand_network,~] = null_model_dir_sign(network,bin_swaps,weight_frequency);
         % Calculate the motif for the X random network. (BOTTLE NECK)
-        [rand_intensity(i,:,:),rand_coherence(i,:,:),rand_frequency(i,:,:)] = motif3funct_wei_augmented(rand_network);
+        [rand_intensity(i,:,:),rand_coherence(i,:,:),rand_frequency(i,:,:)] = motif3funct_wei_augmented(rand_network,channels_location);
     end
     
     %% 4) Calculate the Z score for each motifs
