@@ -46,17 +46,21 @@ result_wpli = na_wpli(recording, frequency_band, window_size, step_size, number_
 %plot an empty default circle
 %plot will contain all connectivity LARGER then this (plot if value > threshold)
 %the threshold must be between 0 and maxvalue
-threshold=0.05;
+threshold=0.15;
 
-mode="Midline"; % Mode can be "Inter" for interhemispheric connections,
+mode="Inter"; % Mode can be "Inter" for interhemispheric connections,
                 %"Intra" for Intrahemisoheric connections and
                 %"Midline" for connections to the Midlien-electrodes
 
+% The excel file provedes the location and electrode ordering in the circle. 
+% Make sure the excel file is in the current working directory
 % This will generate a single image  
 plot_circle(result_wpli.data.wpli(2,:,:),recording,threshold, mode);
 plot_circle(result_wpli.data.avg_wpli,recording,threshold, mode);
 
 %This will generate a video of connectivity
+%The video will be saved in the current directory; 
+% A step size of 0.1 -1s is a good value for a flluent video 
 name = 'test_test'
 make_video_circle(name, result_wpli.data.wpli(:,:,:),recording,threshold, mode, step_size)
 
