@@ -1,4 +1,4 @@
-function [intensity, coherence, frequency, source, target, distance] = motif_3(network,channels_location, number_rand_network, bin_swaps, weight_frequency)
+function [frequency, source, target, distance] = motif_3(network,channels_location, number_rand_network, bin_swaps, weight_frequency)
 %MOTIF_3    
     
     %% 1) Calculate the motif for our network of interest.
