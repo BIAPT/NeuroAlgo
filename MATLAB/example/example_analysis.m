@@ -32,8 +32,8 @@ window_size = 10;
 time_bandwith_product = 2;
 number_tapers = 3;
 spectrum_window_size = 3; % in seconds
-step_size = 5; % in seconds
-bandpass = [0.5 50];
+step_size = 0.1; % in seconds
+bandpass = [8 13];
 result_sp = na_spectral_power(recording, window_size, time_bandwith_product, number_tapers, spectrum_window_size, bandpass,step_size);
 
 
