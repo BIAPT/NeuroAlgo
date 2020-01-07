@@ -35,8 +35,8 @@ function [result] = na_spectral_power(recording, window_size, time_bandwidth_pro
           result.data.frequencies = frequency;
        else
            result.data.spectrums = cat(3,result.data.spectrums,spectrum);
-           result.data.timestamps = cat(2,result.data.timestamps,timestamp);
-           result.data.frequencies = cat(2,result.data.frequencies, frequency);
+           result.data.timestamps = cat(1,result.data.timestamps,timestamp);
+           result.data.frequencies = cat(1,result.data.frequencies, frequency);
        end
        %result.data.spectrums = [result.data.spectrums,spectrum]; % TODO: find a way to initialize this properly
     end
