@@ -8,10 +8,28 @@ function [null_networks] = generate_null_networks(matrix, number_null_network, b
     
     % Here we use multi-core to speed up the analysis (this is a
     % bottleneck)
+    is_binary = is_matrix_binary(matrix);
     parfor i = 1:number_null_network
-        [null_matrix,~] = null_model_und_sign(matrix,bin_swaps,weight_frequency);    % generate random matrix
+        if(is_binary)
+            [null_matrix,~] = randmio_und(matrix,bin_swaps);  
+        else
+            [null_matrix,~] = null_model_und_sign(matrix,bin_swaps,weight_frequency);  
+        end
         null_networks(i,:,:) = null_matrix; % store all null matrix
     end
 
 end
 
+function result = is_matrix_binary(matrix)
+    result = 1;
+    for i = 1:length(matrix)
+        
+        for j =1:length(matrix)
+            if(matrix(i,j) ~= 0 && matrix(i,j) ~= 1)
+               result = 0;
+               return;
+            end
+        end
+    end
+    
+end
