@@ -121,8 +121,8 @@ for u=1:n-2                               	%loop u 1:n-2
                source(7, [u v1 v2]) = source(7, [u v1 v2]) + [1 1 1]; % every channel is a source            
                target(7, [u v1 v2]) = target(7, [u v1 v2]) + [1 1 1]; % every channel is also a target
             
-               distance(7, u) = distance(7, u) + distances(1) + distances(2) + distance(3) + distances(5);
-               distance(7, v1) = distance(7, v1) + distance(1) + distances(3) + distances(4) + distances(6);
+               distance(7, u) = distance(7, u) + distances(1) + distances(2) + distances(3) + distances(5);
+               distance(7, v1) = distance(7, v1) + distances(1) + distances(3) + distances(4) + distances(6);
                distance(7, v2) = distance(7, v2) + distances(2) + distances(4) + distances(5) + distances(6);
             end
             
@@ -145,8 +145,8 @@ for u=1:n-2                               	%loop u 1:n-2
                 source(1, [u v1 v2]) = source(1, [u v1 v2]) + source_score;
                 target(1, [u v1 v2]) = target(1, [u v1 v2]) + target_score;
                 
-                distance(1, u) = distance(1, u) + distances(1) + distances(2) + distance(3) + distances(5);
-                distance(1, v1) = distance(1, v1) + distance(1) + distances(3) + distances(4) + distances(6);
+                distance(1, u) = distance(1, u) + distances(1) + distances(2) + distances(3) + distances(5);
+                distance(1, v1) = distance(1, v1) + distances(1) + distances(3) + distances(4) + distances(6);
                 distance(1, v2) = distance(1, v2) + distances(2) + distances(4) + distances(5) + distances(6);
             end
             
