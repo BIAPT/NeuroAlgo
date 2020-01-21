@@ -1,4 +1,4 @@
-function [normalized_location,previous_location, channels_degree] = binary_hub_location(b_matrix, channels_location, t_level)
+function [median_degree_location,max_degree_location, channels_degree] = binary_hub_location(b_matrix, channels_location, t_level)
 %HUB_LOCATION choose from the the channels the channel with the highest
 %degree
 % Input:
@@ -14,7 +14,7 @@ function [normalized_location,previous_location, channels_degree] = binary_hub_l
     
     %% Calculate previous location
     [~, channel_index] = max(channels_degree);
-    previous_location = threshold_anterior_posterior(channel_index, channels_location);
+    max_degree_location = threshold_anterior_posterior(channel_index, channels_location);
 
     %% Threshold the degree to keep only t
     sorted_degree = sort(channels_degree);
@@ -34,8 +34,6 @@ function [normalized_location,previous_location, channels_degree] = binary_hub_l
             non_zero_hub_degree(end+1) = current_degree; 
         end
     end
-    disp("Non zero hub degree:")
-    non_zero_hub_degree
     % get the median value of the non-zero hub degree
     % to detect which region should be returned (we don't look at extreme
     % values)
@@ -43,7 +41,7 @@ function [normalized_location,previous_location, channels_degree] = binary_hub_l
     disp("The degree of the selected hub:");
     disp(m_hub_degree)
     m_hub_degree_index = find(channels_degree == m_hub_degree);  
-    normalized_location = threshold_anterior_posterior(m_hub_degree_index, channels_location);
+    median_degree_location = threshold_anterior_posterior(m_hub_degree_index, channels_location);
 end
 
 % This will try to find the middle degree value not looking at extreme
