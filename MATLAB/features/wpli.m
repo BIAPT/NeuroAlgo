@@ -2,7 +2,6 @@ function [corrected_wpli] = wpli(eeg_data, number_surrogates, p_value)
 %WPLI calculate weighted PLI and do some correction
 %   Input:
 %       eeg_data: data to calculate pli on
-%       eeg_info: info about the headset
 %       number_surrogates: number of surrogates data to generate
 %       p_value: p value level to test at
 %   Output:
