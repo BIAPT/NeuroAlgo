@@ -61,6 +61,7 @@ plot_circle(result_wpli.data.avg_wpli,recording,threshold, mode);
 %This will generate a video of connectivity
 %The video will be saved in the current directory; 
 % A step size of 0.1 -1s is a good value for a flluent video 
+step_size=10
 name = 'test_test'
 make_video_circle(name, result_wpli.data.wpli(:,:,:),recording,threshold, mode, step_size)
 

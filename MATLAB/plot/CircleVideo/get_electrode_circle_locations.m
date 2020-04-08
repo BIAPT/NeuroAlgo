@@ -1,9 +1,9 @@
 function [channel_data]= get_electrode_circle_locations(recording,x1,y1,x2,y2)
     
     ex = dir('Electrode number*');
-    [~,~,el_left]=xlsread(ex.folder+"\"+ ex(1).name,"Left");
-    [~,~,el_right]=xlsread(ex.folder+"\"+ ex(1).name,"Right");
-    [~,~,el_midline]=xlsread(ex.folder+"\"+ ex(1).name,"MIDELINE");
+    [~,~,el_left]=xlsread(ex.folder+"/"+ ex(1).name,"LEFT");
+    [~,~,el_right]=xlsread(ex.folder+"/"+ ex(1).name,"RIGHT");
+    [~,~,el_midline]=xlsread(ex.folder+"/"+ ex(1).name,"MIDELINE");
     
     channel_data=[]
 
