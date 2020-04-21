@@ -21,25 +21,28 @@ function [result] = na_hub_location(recording, frequency_band, window_size, step
     % Here we init the sliding window slicing 
     recording = recording.init_sliding_window(window_size, step_size);
     number_window = recording.max_number_window;
+    location = recording.channels_location;
     
     
     %% Calculation on the windowed segments
+    result.data.wpli = zeros(number_window, recording.number_channels, recording.number_channels);
     result.data.hub_index = zeros(1,number_window);
-    result.data.hub_degree = zeros(1,number_window);
-    result.data.hub_relative_position = zeros(1,number_window);
-    result.data.graph = zeros(number_window, recording.number_channels, recording.number_channels);
+    result.data.hub_weights = zeros(1,recording.number_channels);
     for i = 1:number_window
        print_message(strcat("Hub Location at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
        [recording, segment_data] = recording.get_next_window();
        
+       % Calculating the wPLI and binarize it
+       segment_wpli = wpli(segment_data, number_surrogate, p_value); 
+       result.data.wpli(i,:,:) = segment_wpli;
+       b_wpli = binarize_matrix(threshold_matrix(segment_wpli, threshold));
+       
        % Calculating hub data for the segment
-       [channel_index, channel_degree, relative_position, graph] = hub_location(segment_data, recording.channels_location, number_surrogate, p_value, threshold); 
+       [hub_index, weights] = binary_hub_location(b_wpli, location);
        
        % Saving the hub data for this segment
-       result.data.hub_index(i) = channel_index;
-       result.data.hub_degree(i) = channel_degree;
-       result.data.hub_relative_position(i) = relative_position;
-       result.data.graph(i,:,:) = graph;
+       result.data.hub_index(i) = hub_index;
+       result.data.hub_weights(i,:) = weights;
     end
 end
 
