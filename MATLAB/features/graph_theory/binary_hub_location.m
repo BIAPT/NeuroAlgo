@@ -31,19 +31,29 @@ function [hub_location, weights] = binary_hub_location(b_wpli, location)
 end
 
 function [normalized_value] = threshold_anterior_posterior(index,channels_location)
-%THRESHOLD_ANTERIOR_POSTERIOR Summary of this function goes here
-%   Detailed explanation goes here
+%THRESHOLD_ANTERIOR_POSTERIOR This function will squash the channels in the
+%direction of the anterior-posterior line and will set the most posterior
+%index to 0 and the anterior most anterior index to 1
+%   To do so it takes the index of the channel we want to normalize in the
+%   posterior-anterior direction and the channels location for where it
+%   came from. It then will find the value this channel should have.
+% input:
+% index: index of the channel to normalize between 0 and 1
+% channels_location: 3D channel data structure
 
+    % Get the X index of the current channels
     current_x = channels_location(index).X;
     
+    % Accumulate all the Xs index for the channels locations
     all_x = zeros(1,length(channels_location));
     for i = 1:length(channels_location)
        all_x(i) = channels_location(i).X; 
     end
     
+    % Normalize the current value of x between the min coordinate we have
+    % in the headset and the maximum
     min_x = min(all_x);
     max_x = max(all_x);
-    
     normalized_value = (current_x - min_x)/(max_x - min_x);
 end
 
