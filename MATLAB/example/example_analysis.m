@@ -27,6 +27,9 @@ recording = load_set('test_data.set',test_data_path);
     recording class take a look at the /source folder
 %}
 
+
+
+
 % Spectral Power
 window_size = 10;
 time_bandwith_product = 2;
@@ -60,7 +63,7 @@ number_surrogate = 10; % Number of surrogate wPLI to create
 p_value = 0.05; % the p value to make our test on
 threshold = 0.10; % This is the threshold at which we binarize the graph
 step_size = 10;
-%result_hl = na_hub_location(recording, frequency_band, window_size, step_size, number_surrogate, p_value, threshold);
+result_hl = na_hub_location(recording, frequency_band, window_size, step_size, number_surrogate, p_value, threshold);
 
 % Permutation Entropy (PE)
 frequency_band = [7 13]; % This is in Hz

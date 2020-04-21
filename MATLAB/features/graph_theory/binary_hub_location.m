@@ -1,71 +1,59 @@
-function [median_degree_location,max_degree_location, channels_degree] = binary_hub_location(b_matrix, channels_location, t_level)
-%HUB_LOCATION choose from the the channels the channel with the highest
-%degree
-% Input:
-%   b_matrix: a binary undirected matrix
-%   t_level: what top percentage represent a hub in the brain (what is the
-%   definition of a hub)
-     
-    num_element = length(b_matrix);
-    
-    
-    %% Caculate the unweighted degree of the network
-    channels_degree = degrees_und(b_matrix);
-    
-    %% Calculate previous location
-    [~, channel_index] = max(channels_degree);
-    max_degree_location = threshold_anterior_posterior(channel_index, channels_location);
+function [hub_location, weights] = binary_hub_location(b_wpli, location)
+%BETWEENESS_HUB_LOCATION select a channel which is the highest hub based on
+%betweeness centrality and degree
+% input:
+% b_wpli: binary matrix
+% location: 3d channels location
+% output:
+% hub_location: This is a number between 0 and 1, where 0 is fully
+% posterior and 1 is fully anterior
+% weights: this is a an array containing weights of each of the channel in
+% the order of the location structure
 
-    %% Threshold the degree to keep only t
-    sorted_degree = sort(channels_degree);
-    t_index = floor(num_element*(1 - t_level)) + 1;
-    t_element = sorted_degree(t_index);
+    %% 1.Calculate the degree for each electrode.
+    degrees = degrees_und(b_wpli);
+    norm_degree = (degrees - mean(degrees)) / std(degrees);
+    a_degree = 1.0;
+    
+    %% 2. Calculate the betweeness centrality for each electrode.
+    bc = betweenness_bin(b_wpli);
+    norm_bc = (bc - mean(bc)) / std(bc);
+    a_bc = 1.0;
     
     
-    %% Threshold the degrees
-    t_channels_degree = channels_degree;
-    t_channels_degree(t_channels_degree < t_element) = 0;
+    %% 3. Combine the two Weightsmetric (here we assume equal weight on both the degree and the betweeness centrality)
+    weights = a_degree*norm_degree + a_bc*norm_bc;
     
-    % Get only the hub degree
-    non_zero_hub_degree = [];
-    for i = 1:num_element
-        current_degree = t_channels_degree(i);
-        if(current_degree > 0)
-            non_zero_hub_degree(end+1) = current_degree; 
-        end
-    end
-    % get the median value of the non-zero hub degree
-    % to detect which region should be returned (we don't look at extreme
-    % values)
-    m_hub_degree = find_hub(non_zero_hub_degree);
-    disp("The degree of the selected hub:");
-    disp(m_hub_degree)
-    m_hub_degree_index = find(channels_degree == m_hub_degree);  
-    median_degree_location = threshold_anterior_posterior(m_hub_degree_index, channels_location);
-end
+    %% Obtain a metric for the channel that is most likely the hub epicenter
+    [~, channel_index] = max(weights);
+    hub_location = threshold_anterior_posterior(channel_index, location);
 
-% This will try to find the middle degree value not looking at extreme
-% values
-function [middle_value] = find_hub(hubs)
-    sorted_hub_degree = sort(hubs);
-    middline_index = floor(length(sorted_hub_degree)/2);
-    middle_value = sorted_hub_degree(middline_index);
 end
 
 function [normalized_value] = threshold_anterior_posterior(index,channels_location)
-%THRESHOLD_ANTERIOR_POSTERIOR Summary of this function goes here
-%   Detailed explanation goes here
+%THRESHOLD_ANTERIOR_POSTERIOR This function will squash the channels in the
+%direction of the anterior-posterior line and will set the most posterior
+%index to 0 and the anterior most anterior index to 1
+%   To do so it takes the index of the channel we want to normalize in the
+%   posterior-anterior direction and the channels location for where it
+%   came from. It then will find the value this channel should have.
+% input:
+% index: index of the channel to normalize between 0 and 1
+% channels_location: 3D channel data structure
 
+    % Get the X index of the current channels
     current_x = channels_location(index).X;
     
+    % Accumulate all the Xs index for the channels locations
     all_x = zeros(1,length(channels_location));
     for i = 1:length(channels_location)
        all_x(i) = channels_location(i).X; 
     end
     
+    % Normalize the current value of x between the min coordinate we have
+    % in the headset and the maximum
     min_x = min(all_x);
     max_x = max(all_x);
-    
     normalized_value = (current_x - min_x)/(max_x - min_x);
 end
 
