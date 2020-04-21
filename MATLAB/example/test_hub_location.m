@@ -16,57 +16,26 @@ p_value = 0.05; % the p value to make our test on
 step_size = 0.1;
 result_wpli = na_wpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
 
-figure;
-subplot(2,1,1)
-imagesc(squeeze(mean(result_wpli.data.wpli)));
-colorbar
-colormap jet; 
-title(strcat("Average Participant at ", string(number_surrogate), " surrogates"));
-subplot(2,1,2);
-imagesc(squeeze(result_wpli.data.wpli(5,:,:)));
-colormap jet; 
-colorbar;
-title(strcat("Single participant #",string(15)," at ", string(number_surrogate), " surrogates"));
-
-% Calculating Hub Location on the average wpli
+% Calculating Hub Location on the each window of wpli
 channels_location = result_wpli.metadata.channels_location;
 
 % calculate hub location
 t_level_wpli = 0.2;
-t_level_hub = 0.10;
 wpli = result_wpli.data.wpli;
 [num_window, num_channels,~] = size(wpli);
 
-degree_map = zeros(num_window, num_channels);
+% Here we are iterating on each window of the wpli matrices, binarize them
+% and then running the binary_hub_location it
+hub_map = zeros(num_window, num_channels);
 median_location = zeros(1,num_window);
 max_location = zeros(1,num_window);
 for i = 1:num_window   
     % binarized the wpli matrix
     b_wpli = binarize_matrix(threshold_matrix(squeeze(wpli(i,:,:)), t_level_wpli));
-    [normalized_location,previous_location, channels_degree] = binary_hub_location(b_wpli, channels_location, t_level_hub);
-    degree_map(i,:) = channels_degree;
-    median_location(i) = normalized_location;
-    max_location(i) = previous_location;
+    [hub_location, weights] = binary_hub_location(b_wpli, channels_location);
+    hub_map(i,:) = weights;
 end
 
+% We are showing this stack of weights map into a small movie
 filename = 'hub_location_technique_comparison';
-make_video_hub_location(filename, degree_map, median_location, max_location, channels_location, step_size)
-
-
-function plot_hub(normalized_location, previous_location, channels_degree, channels_location)
-    % Plotting the hub location
-    figure;
-    subplot(1,3,1)
-    topoplot(channels_degree,channels_location,'maplimits','absmax', 'electrodes', 'off');
-    colormap('cool');
-    colorbar;
-    title('Degrees')
-    subplot(1,3,2);
-    bar(normalized_location);
-    ylim([0 1])
-    title('Current Normalized Location (median)');
-    subplot(1,3,3);
-    bar(previous_location);
-    ylim([0 1])
-    title('Previous Normalized Location (max)');
-end
+make_video_hub_location(filename, hub_map, channels_location, step_size)
