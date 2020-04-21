@@ -17,6 +17,21 @@ A hub is a node in the brain with a lot of incoming connection, but a few output
 We can use the degree to approximate this, however using betweeness centrality help a lot the analysis. 
 Below you will see the hub location definition we've build using the [Brain Connectivity Toolbox](https://sites.google.com/site/bctnet/).
 
+Concretely this is how we can use the `na_hub_location.m` functino:
+```matlab
+
+   recording = load_set('name_of_data.set',path_to_data);
+   frequency_band = [7 13]; 
+   window_size = 10; 
+   number_surrogate = 10; 
+   p_value = 0.05; 
+   threshold = 0.10;
+   step_size = 10;
+   result_hl = na_hub_location(recording, frequency_band, window_size, step_size, number_surrogate, p_value, threshold);
+
+```
+For more detailed help type `help na_hub_location` at the MATLAB command prompt.
+
 The definition of a hub we are using is the following:
 `hub = Max of (1.0*norm_betweenes_centrality + 1.0*norm_degree)`
 
