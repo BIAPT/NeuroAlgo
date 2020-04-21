@@ -6,6 +6,24 @@ function [r_wpli, r_location, r_regions] = reorder_channels(wpli, location,casse
     % Save the original directory and move to the other path
     channel_order = readtable(cassette);
     
+    % Convert all location to the right name if we have biapt_egi129
+    if strcmp(cassette, 'biapt_egi129.csv')
+        convertion_table = readtable('biapt_egi129_convertion.csv');
+        for i = 1:height(convertion_table)
+            label = convertion_table.egi_naming_region{i};
+            index = get_index_label(location, label);
+            
+            % If the index is not there then we are good we skip it
+            if index == 0 
+               continue 
+            end
+            
+            % We convert that label to the right naming scheme
+            convertion_label = convertion_table.egi_naming_letter{i};
+            location(index).labels = convertion_label;
+        end
+    end
+    
     % Fetch the correct channels location information
     [num_location, labels, regions] = get_num_location(location, channel_order);
     
@@ -28,6 +46,7 @@ function [r_wpli, r_location, r_regions] = reorder_channels(wpli, location,casse
             % If one of the channel doesn't exist we just skip this
             % iteration
             if(index_1 == 0 || index_2 == 0)
+                disp(strcat("Label 1: ", label_1, " with label 2: ", label_2));
                continue 
             end
             
