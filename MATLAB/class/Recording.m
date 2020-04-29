@@ -163,6 +163,9 @@ classdef Recording
             obj.window_size = window_size*obj.sampling_rate;
             obj.step_size = step_size*obj.sampling_rate;
             obj.max_number_window = length(1:obj.step_size:(obj.length_recording - obj.window_size));
+            if obj.max_number_window == 0 %happens if window size = length recording (i.e. if length of recording is a multiple of sampling rate)
+                obj.max_number_window = 1;
+            end
             obj.current_window = 1;
         end
         
