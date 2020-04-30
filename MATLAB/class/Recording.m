@@ -34,10 +34,52 @@ classdef Recording
             % channels at specific location
             if(~isempty(channels_location))
                 obj = obj.compute_region_label();
+                obj = obj.compute_lobe();
             end
         end
         
         %% Helper Function
+        
+        function obj = compute_lobe(obj)
+            %label channels as F,C,P,O or T
+            
+            %includes 10-20 and EGI labels (e.g. E11 = Fz)
+            F = {'E1','E2','E3','E4','E5','E9','E10','E11','E12',...
+                'E15','E16','E18','E19','E20','E22','E23','E24','E26',...
+                'E27','E28','E32','E33','E34','E116','E117','E118','E122','E123',...
+                'E124','Fp2','Fz','Fp1','F3','F7','F8','F4'};
+            
+            C = {'E6','E7','E13','E29','E30','E31','E35','E36','E37',...
+                'E41','E42','E47','E53','E54','E55','E79','E80','E86',...
+                'E87','E93','E98','E103','E104','E105','E106','E110',...
+                'E111','E112','E1001','C3','C4','Cz'};
+            
+            P = {'E51','E52','E58','E59','E60','E61','E62','E66','E67',...
+                'E71','E72','E76','E77','E78','E84','E85','E91','E92','E96','E97',...
+                'P3','T5','Pz','P4','T6'};
+            
+            O = {'E64','E65','E69','E70','E74','E75','E82','E83','E89','E90','E95',...
+                'O1','Oz','O2'};
+            
+            T = {'E38','E39','E40','E44','E45','E46','E50','E57','E100','E101','E102',...
+                'E108','E109','E114','E115','E121','T3','LM','RM','T4'};
+            
+            for i = 1:obj.number_channels
+                x = obj.channels_location(i).labels;
+                if any(strcmp(x,F))
+                    obj.channels_location(i).lobe = 'F';
+                elseif any(strcmp(x,C))
+                    obj.channels_location(i).lobe = 'C';
+                elseif any(strcmp(x,P))
+                    obj.channels_location(i).lobe = 'P';
+                elseif any(strcmp(x,O))
+                    obj.channels_location(i).lobe = 'O';
+                elseif any(strcmp(x,T))
+                    obj.channels_location(i).lobe = 'T';
+                end
+            end
+        end
+        
         function  obj = compute_region_label(obj)
             % Label whether the channels is anterior or posterior
             epsilon = 0.000001;
