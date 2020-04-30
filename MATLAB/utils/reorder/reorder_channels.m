@@ -1,4 +1,4 @@
-function [r_wpli, r_location, r_regions] = reorder_channels(wpli, location,cassette)
+function [r_wpli, r_labels, r_regions, r_location] = reorder_channels(wpli, location,cassette)
 %REORDER CHANNELS take a wPLI matrix and a channels location struct and
 %reorder the channels (will also implicitly filter because it is using
 %scalp only channels file
@@ -29,25 +29,30 @@ function [r_wpli, r_location, r_regions] = reorder_channels(wpli, location,casse
     
     % Init the return data structure
     r_wpli = zeros(num_location, num_location);
-    r_location = labels;
+    r_labels = labels;
     r_regions = regions;
+    r_location = [];
     
     % Iterate over all the channels combination (num_channels *
     % num_channels)
     for l1 = 1:length(labels)
        label_1 = labels{l1};
+       index_1 = get_index_label(location, label_1);
        
+       % index_1 doesn't exist we skip this iteration
+       if(index_1 == 0)
+          continue; 
+       end
+       
+       r_location = [r_location location(index_1)];
         for l2 = 1:length(labels)
             label_2 = labels{l2};
-            
-            index_1 = get_index_label(location, label_1);
             index_2 = get_index_label(location, label_2);
             
             % If one of the channel doesn't exist we just skip this
             % iteration
-            if(index_1 == 0 || index_2 == 0)
-                disp(strcat("Label 1: ", label_1, " with label 2: ", label_2));
-               continue 
+            if(index_2 == 0)
+                continue 
             end
             
             r_wpli(l1,l2) = wpli(index_1, index_2);
