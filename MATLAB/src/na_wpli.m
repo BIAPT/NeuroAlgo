@@ -69,6 +69,10 @@ function [result] = na_wpli(recording, frequency_band, window_size, step_size, n
     is_right_midline_posterior = (is_right_midline & is_posterior);
     
     % Calculating wpli for each region
+    
+    result.data.left_wpli = result.data.wpli(:,logical(is_left),logical(is_left));
+    result.data.right_wpli = result.data.wpli(:,logical(is_right),logical(is_right));
+    
     result.data.left_lateral_wpli = result.data.wpli(:, is_left_lateral, is_left_lateral);
     result.data.left_lateral_anterior_wpli = result.data.wpli(:, is_left_lateral_anterior, is_left_lateral_anterior);
     result.data.left_lateral_posterior_wpli = result.data.wpli(:, is_left_lateral_posterior, is_left_lateral_posterior);    
@@ -85,7 +89,13 @@ function [result] = na_wpli(recording, frequency_band, window_size, step_size, n
     result.data.right_midline_anterior_wpli = result.data.wpli(:, is_right_midline_anterior, is_right_midline_anterior);
     result.data.right_midline_posterior_wpli = result.data.wpli(:, is_right_midline_posterior, is_right_midline_posterior);    
     
+    % Calculating average over time (Nvertices x Nvertices)
+    
+    result.data.avg_left_wpli = squeeze(mean(result.data.left_wpli,1));
+    result.data.avg_right_wpli = squeeze(mean(result.data.right_wpli,1));
+    
     % Calculating average per region for each window
+    
     result.data.avg_left_lateral_wpli = average_connectivity(result.data.left_lateral_wpli);
     result.data.avg_left_lateral_anterior_wpli = average_connectivity(result.data.left_lateral_anterior_wpli);
     result.data.avg_left_lateral_posterior_wpli = average_connectivity(result.data.left_lateral_posterior_wpli);
