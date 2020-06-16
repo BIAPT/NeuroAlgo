@@ -14,7 +14,7 @@ NA comes bundled with a few features that can be used out of the box.
 
 ### Hub Location
 A hub is a node in the brain with a lot of incoming connection, but a few outputing connection.
-We can use the degree to approximate this, however using betweeness centrality help a lot the analysis. 
+We can use the degree to approximate this, however using betweeness centrality help a lot the analysis. **The hub location has now two parameter to control how much of the degree and the betweeness centrality we want to take into consideration.**
 Below you will see the hub location definition we've build using the [Brain Connectivity Toolbox](https://sites.google.com/site/bctnet/).
 
 Concretely this is how we can use the `na_hub_location.m` functino:
@@ -27,17 +27,19 @@ Concretely this is how we can use the `na_hub_location.m` functino:
    p_value = 0.05; 
    threshold = 0.10;
    step_size = 10;
-   result_hl = na_hub_location(recording, frequency_band, window_size, step_size, number_surrogate, p_value, threshold);
+   a_degree = 1.0;
+   a_bc = 1.0;
+   result_hl = na_hub_location(recording, frequency_band, window_size, step_size, number_surrogate, p_value, threshold, a_degree, a_bc);
 
 ```
 For more detailed help type `help na_hub_location` at the MATLAB command prompt.
 
 The definition of a hub we are using is the following:
-`hub = Max of (1.0*norm_betweenes_centrality + 1.0*norm_degree)`
+`hub = Max of (a_bc*norm_betweenes_centrality + a_degree*norm_degree)`
 
 This is given by the following code:
 ```matlab
-function [hub_location] = betweeness_hub_location(b_wpli, location)
+function [hub_location] = betweeness_hub_location(b_wpli, location, a_degree, a_bc)
 %BETWEENESS_HUB_LOCATION select a channel which is the highest hub based on
 %betweeness centrality and degree
 % b_wpli: binary matrix
@@ -46,13 +48,11 @@ function [hub_location] = betweeness_hub_location(b_wpli, location)
     %% 1.Calculate the degree for each electrode.
     degrees = degrees_und(b_wpli);
     norm_degree = (degrees - mean(degrees)) / std(degrees);
-    a_degree = 1.0;
     
     
     %% 2. Calculate the betweeness centrality for each electrode.
     bc = betweenness_bin(b_wpli);
     norm_bc = (bc - mean(bc)) / std(bc);
-    a_bc = 1.0;
     
     
     %% 3. Combine the two metric (here we assume equal weight on both the degree and the betweeness centrality)
