@@ -13,7 +13,9 @@ frequency_band = [7 13]; % This is in Hz
 window_size = 20; % This is in seconds and will be how we chunk the whole dataset
 number_surrogate = 20; % Number of surrogate wPLI to create
 p_value = 0.05; % the p value to make our test on
-step_size = 0.1;
+step_size = 10;
+a_degree = 1.0;
+a_bc = 1.0;
 result_wpli = na_wpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
 
 % Calculating Hub Location on the each window of wpli
@@ -32,7 +34,7 @@ max_location = zeros(1,num_window);
 for i = 1:num_window   
     % binarized the wpli matrix
     b_wpli = binarize_matrix(threshold_matrix(squeeze(wpli(i,:,:)), t_level_wpli));
-    [hub_location, weights] = binary_hub_location(b_wpli, channels_location);
+    [hub_location, weights] = binary_hub_location(b_wpli, channels_location, a_degree, a_bc);
     hub_map(i,:) = weights;
 end
 

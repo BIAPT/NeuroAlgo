@@ -1,4 +1,4 @@
-function [result] = na_hub_location(recording, frequency_band, window_size, step_size, number_surrogate, p_value ,threshold)
+function [result] = na_hub_location(recording, frequency_band, window_size, step_size, number_surrogate, p_value ,threshold, a_degree, a_bc)
 %NA_HUB_LOCATION will calculate hub locations
 %(as defined by betweeness-centrality and degree) for the whole recording 
 %of EEG data and store it inside a result data structure. 
@@ -22,6 +22,9 @@ function [result] = na_hub_location(recording, frequency_band, window_size, step
 %   p_value: p value at which to say that a connection is significant
 %   threshold: from 0 to 1 it's the amount of top connection we want to
 %   keep in the wPLI->binary_wpli.
+%   a_degree: weight to put on the degree for the definition of hub
+%   a_bc: weight to put on the betweeness centrality for the definition of
+%   hub
 %
 %   output:
 %   result: a datastructure containing all the parameters information,
@@ -48,6 +51,8 @@ function [result] = na_hub_location(recording, frequency_band, window_size, step
     result.parameters.p_value = p_value;
     result.parameters.threshold = threshold;
     result.parameters.step_size = step_size;
+    result.parameters.a_degree = a_degree;
+    result.parameters.a_bc = a_bc;
     
     %% Filtering the data
     print_message(strcat("Filtering Data from ",string(frequency_band(1)), "Hz to ", string(frequency_band(2)), "Hz."),configuration.is_verbose);
@@ -73,7 +78,7 @@ function [result] = na_hub_location(recording, frequency_band, window_size, step
        b_wpli = binarize_matrix(threshold_matrix(segment_wpli, threshold));
        
        % Calculating hub data for the segment
-       [hub_index, weights] = binary_hub_location(b_wpli, location);
+       [hub_index, weights] = binary_hub_location(b_wpli, location, a_degree, a_bc);
        
        % Saving the hub data for this segment
        result.data.hub_index(i) = hub_index;
