@@ -1,9 +1,13 @@
-function [hub_location, weights] = binary_hub_location(b_wpli, location)
+function [hub_location, weights] = binary_hub_location(b_wpli, location, a_degree, a_bc)
 %BETWEENESS_HUB_LOCATION select a channel which is the highest hub based on
 %betweeness centrality and degree
 % input:
 % b_wpli: binary matrix
 % location: 3d channels location
+% a_degree: weight to put on the degree for the definition of hub
+% a_bc: weight to put on the betweeness centrality for the definition of
+% hub
+%
 % output:
 % hub_location: This is a number between 0 and 1, where 0 is fully
 % posterior and 1 is fully anterior
@@ -13,12 +17,10 @@ function [hub_location, weights] = binary_hub_location(b_wpli, location)
     %% 1.Calculate the degree for each electrode.
     degrees = degrees_und(b_wpli);
     norm_degree = (degrees - mean(degrees)) / std(degrees);
-    a_degree = 1.0;
     
     %% 2. Calculate the betweeness centrality for each electrode.
     bc = betweenness_bin(b_wpli);
     norm_bc = (bc - mean(bc)) / std(bc);
-    a_bc = 1.0;
     
     
     %% 3. Combine the two Weightsmetric (here we assume equal weight on both the degree and the betweeness centrality)
