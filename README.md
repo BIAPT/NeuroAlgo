@@ -1,4 +1,5 @@
-# Neuro Algorithm (NA)
+![Neuro Algo Logo](./documentation/logo.png)
+
 This library is used by the BIAPT lab to simplify the analysis of the various computational neuroscience experiment we are running.
 
 ## Table of Content
