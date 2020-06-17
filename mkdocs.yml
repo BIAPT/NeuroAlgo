@@ -1,0 +1,39 @@
+# Project information
+site_name: NeuroAlgo Docs
+site_description: A simple library for computational neuroscience analysis
+site_author: Yacine Mahdid
+site_url: https://github.com/BIAPT/NeuroAlgo/
+
+# Repository
+repo_name: NeuroAlgo
+repo_url: https://github.com/BIAPT/NeuroAlgo/
+
+# Copyright
+copyright: Copyright &copy; 2019 - 2020 BIAPT Lab
+
+# Configuration
+theme:
+  name: material
+  language: en
+  logo: images/na_logo.png
+  favicon: images/favicon.ico
+  palette:
+    primary: black
+    accent: indigo
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+# Extras
+extra:
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/BIAPT/
+
+# Extensions
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
