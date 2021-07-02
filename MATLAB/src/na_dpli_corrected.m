@@ -1,5 +1,7 @@
-function [result] = na_dpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value)
+function [result] = na_dpli_corrected(recording, frequency_band, window_size, step_size, number_surrogate, p_value)
     %NA_dPLI NeuroAlgo implementation of dpli that works with Recording
+    
+    %only change made to this code is calling dpli_corrected instead of dPLI in line 33
     
     %% Getting the Configuration
     configuration = get_configuration();
@@ -28,7 +30,7 @@ function [result] = na_dpli(recording, frequency_band, window_size, step_size, n
        print_message(strcat("dPLI at window: ",string(i)," of ", string(number_window)),configuration.is_verbose); 
        % Calculate the dpli
        [recording, segment_data] = recording.get_next_window();
-       segment_dpli = dpli(segment_data, number_surrogate, p_value); 
+       [segment_dpli] = dpli_corrected(segment_data, number_surrogate, p_value); 
        
        % Storing the dpli
        result.data.dpli(i,:,:) = segment_dpli;
