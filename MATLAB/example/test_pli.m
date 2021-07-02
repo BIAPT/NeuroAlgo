@@ -14,7 +14,9 @@ window_size = 10; % This is in seconds and will be how we chunk the whole datase
 number_surrogate = 20; % Number of surrogate wPLI to create
 p_value = 0.05; % the p value to make our test on
 step_size = window_size;
-result_dpli = na_dpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
+% This was earlier only na_dpli. Because of an error in the code we changed it to an updated version na_dpli_corrected. 
+% This change is effective as of 02.07.2021.  
+result_dpli = na_dpli_corrected(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
 
 figure;
 subplot(2,1,1)
