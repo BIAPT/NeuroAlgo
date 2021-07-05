@@ -5,7 +5,7 @@
 % Here I'm getting it programmatically because my path and your path will
 % be different.
 [filepath,name,ext] = fileparts(mfilename('fullpath'));
-test_data_path = strcat(filepath,'test_data');
+test_data_path = strcat(filepath,filesep,'test_data');
 recording = load_set('test_data.set',test_data_path);
 %{ 
     The recording class is structured as follow:
@@ -27,9 +27,6 @@ recording = load_set('test_data.set',test_data_path);
     recording class take a look at the /source folder
 %}
 
-
-
-
 % Spectral Power
 window_size = 10;
 time_bandwith_product = 2;
@@ -37,8 +34,8 @@ number_tapers = 3;
 spectrum_window_size = 3; % in seconds
 step_size = 0.1; % in seconds
 bandpass = [8 13];
-result_sp = na_spectral_power(recording, window_size, time_bandwith_product, number_tapers, spectrum_window_size, bandpass,step_size);
 
+result_sp = na_spectral_power(recording, window_size, time_bandwith_product, number_tapers, bandpass,step_size);
 
 % wPLI
 frequency_band = [7 13]; % This is in Hz
@@ -46,10 +43,7 @@ window_size = 10; % This is in seconds and will be how we chunk the whole datase
 number_surrogate = 20; % Number of surrogate wPLI to create
 p_value = 0.05; % the p value to make our test on
 step_size = window_size;
-result_wpli2 = na_wpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
-
-figure()
-imagesc(result_wpli.data.avg_wpli)
+result_wpli = na_wpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
 
 % dPLI
 frequency_band = [7 13]; % This is in Hz
@@ -57,7 +51,8 @@ window_size = 10; % This is in seconds and will be how we chunk the whole datase
 number_surrogate = 1; % Number of surrogate wPLI to create
 p_value = 0.05; % the p value to make our test on
 step_size = window_size;
-result_dpli = na_dpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
+% as of July 2021 the dPLI code was corrected. Please use na_dpli_corrected
+result_dpli = na_dpli_corrected(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
 
 % Hub Location (HL)
 frequency_band = [7 13]; % This is in Hz
