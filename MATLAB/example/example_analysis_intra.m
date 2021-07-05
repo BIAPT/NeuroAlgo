@@ -6,7 +6,7 @@
 % be different.
 [filepath,name,ext] = fileparts(mfilename('fullpath'));
 test_data_path = strcat(filepath,'/test_data');
-recording = load_set('test_data_intra.set',test_data_path);
+recording = load_set('test_data.set',test_data_path);
 %{ 
     The recording class is structured as follow:
     recording.data = an (channels, timepoints) matrix corresponding to the EEG
@@ -31,10 +31,9 @@ recording = load_set('test_data_intra.set',test_data_path);
 window_size = 10;
 time_bandwith_product = 2;
 number_tapers = 3;
-spectrum_window_size = 3; % in seconds
 step_size = 5; % in seconds
 bandpass = [0.5 50];
-result_sp = na_spectral_power(recording, window_size, time_bandwith_product, number_tapers, spectrum_window_size, bandpass,step_size);
+result_sp = na_spectral_power(recording, window_size, time_bandwith_product, number_tapers, bandpass,step_size);
 
 
 % wPLI
@@ -51,7 +50,7 @@ window_size = 10; % This is in seconds and will be how we chunk the whole datase
 number_surrogate = 20; % Number of surrogate wPLI to create
 p_value = 0.05; % the p value to make our test on
 step_size = window_size;
-result_dpli = na_dpli(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
+result_dpli = na_dpli_corrected(recording, frequency_band, window_size, step_size, number_surrogate, p_value);
 
 % Permutation Entropy (PE)
 frequency_band = [7 13]; % This is in Hz
