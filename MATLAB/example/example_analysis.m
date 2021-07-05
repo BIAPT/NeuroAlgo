@@ -31,7 +31,6 @@ recording = load_set('test_data.set',test_data_path);
 window_size = 10;
 time_bandwith_product = 2;
 number_tapers = 3;
-spectrum_window_size = 3; % in seconds
 step_size = 0.1; % in seconds
 bandpass = [8 13];
 
